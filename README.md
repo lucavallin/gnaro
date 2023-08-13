@@ -121,5 +121,5 @@ Some of the resources that have been used to develop `gnaro` are:
 ## FAQ
 
 - **Why C?** I haven't written much C since college and nostalgia got me.
-- **What does "gnaro" mean?** It's [Venetian](https://vec.wikipedia.org/wiki/Gnaro) (my native language) for "nest".
+- **What does "gnaro" mean?** It's [Venetian](https://vec.wikipedia.org/wiki/Gnaro) for "nest".
 - **Nice logo, did you design it yourself?** Kind of, I asked Midjourney to come up with some designs.
