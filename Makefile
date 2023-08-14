@@ -10,8 +10,8 @@ BIN_DIR := ./bin
 # Executable settings
 GNARO := gnaro
 GNARO_ARGS_0 := --help
-GNARO_ARGS_1 := -u 0 -m / -c "/bin/bash -c" -a exit
-GNARO_ARGS_2 := -u 0 -m / -c "/bin/bash -c" -a exit -v
+GNARO_ARGS_1 := --version
+GNARO_ARGS_2 := -v
 
 # Libraries settings
 LIB_ARGTABLE_REPO := https://github.com/argtable/argtable3/releases/download/v3.2.2.f25c624/argtable-v3.2.2.f25c624-amalgamation.tar.gz
@@ -25,7 +25,7 @@ LIB_LOG_SRC := $(LIB_LOG_DIR)/log.c
 LIB_LOG_FLAGS := -DLOG_USE_COLOR
 
 # Gnaro object files
-OBJS := $(GNARO).o $(LIB_ARGTABLE_NAME).o $(LIB_LOG_NAME).o
+OBJS := $(GNARO).o input.o $(LIB_ARGTABLE_NAME).o $(LIB_LOG_NAME).o
 
 # Compiler settings
 CC := clang-18

@@ -1,5 +1,15 @@
 # <img src="./docs/gnaro.png" style="width:40px;padding-right:10px;margin-bottom:-8px;"> gnaro
-A SQLite-like database written in C for educational purposes.
+A SQLite-like database written in C for educational purposes. `gnaro` takes SQLite as a reference because of the limited feature set, and therefore complexity, when compared to other databases. SQLite consists roughly of the following components:
+
+- Tokenizer
+- Parser
+- Code Generator
+- Virtual Machine
+- B-Tree
+- Pager
+- OS Interface
+
+Tokenizer, Parser and Code Generator are part of the front-end, which takes in a SQL query and returns bytecode for the SQL Virtual Machine. The Virtual Machine executes the bytecode and interacts with the B-Tree, which is responsible for storing and retrieving data. The Pager is responsible for reading and writing pages to and from disk. The OS Interface is responsible for interacting with the operating system.
 
 ## Usage
 
@@ -114,9 +124,7 @@ In the future, suitable tools for automated testing and documentation might be a
 
 ## Credits
 
-Some of the resources that have been used to develop `gnaro` are:
-
--
+`gnaro` is, for the most part, based on [db_tutorial](https://cstack.github.io/db_tutorial/) by [@cstack](https://github.com/cstack).
 
 ## FAQ
 

@@ -1,7 +1,10 @@
 #include "argtable3.h"
+#include "input.h"
 #include "log.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 enum {
   // ARGTABLE_ARG_MAX is the maximum number of arguments
@@ -53,12 +56,29 @@ int main(int argc, char **argv) {
     log_set_level(LOG_TRACE);
   }
 
-  // Welcome
-  log_info("Welcome to Gnaro!");
+  log_debug("starting gnaro repl...");
+
+  InputBuffer *input_buffer = input_new_buffer();
+  while (true) {
+    printf("gnaro> ");
+
+    if (input_read(input_buffer) < 0) {
+      log_error("error reading input");
+      goto cleanup;
+    }
+
+    if (strcmp(input_buffer->buffer, ".exit") == 0) {
+      goto cleanup;
+    } else {
+      log_error("Unrecognized command '%s'.\n", input_buffer->buffer);
+    }
+  }
 
 cleanup:
   // Clear resources (cgroups, stack, sockets)
   log_info("freeing resources...");
+  log_info("freeing input buffer...");
+  input_close_buffer(input_buffer);
 
 exit:
   log_debug("freeing argtable...");
