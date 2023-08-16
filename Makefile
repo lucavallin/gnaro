@@ -25,7 +25,7 @@ LIB_LOG_SRC := $(LIB_LOG_DIR)/log.c
 LIB_LOG_FLAGS := -DLOG_USE_COLOR
 
 # Gnaro object files
-OBJS := $(GNARO).o input.o $(LIB_ARGTABLE_NAME).o $(LIB_LOG_NAME).o
+OBJS := $(GNARO).o input.o meta.o statement.o $(LIB_ARGTABLE_NAME).o $(LIB_LOG_NAME).o
 
 # Compiler settings
 CC := clang-18

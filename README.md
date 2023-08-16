@@ -9,7 +9,7 @@ A SQLite-like database written in C for educational purposes. `gnaro` takes SQLi
 - Pager
 - OS Interface
 
-Tokenizer, Parser and Code Generator are part of the front-end, which takes in a SQL query and returns bytecode for the SQL Virtual Machine. The Virtual Machine executes the bytecode and interacts with the B-Tree, which is responsible for storing and retrieving data. The Pager is responsible for reading and writing pages to and from disk. The OS Interface is responsible for interacting with the operating system.
+Tokenizer, Parser and Code Generator are part of the front-end, which takes in a SQL query and returns bytecode for the SQL Virtual Machine. A separate front-end reduces the complexity of each component (e.g. virtual machine does not worry about syntax errors) and allows compiling common queries once and caching the bytecode for improved performance. The Virtual Machine executes the bytecode and interacts with the B-Tree, which is responsible for storing and retrieving data. The Pager is responsible for reading and writing pages to and from disk. The OS Interface is responsible for interacting with the operating system.
 
 ## Usage
 

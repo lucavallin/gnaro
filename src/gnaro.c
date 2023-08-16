@@ -1,6 +1,8 @@
 #include "argtable3.h"
 #include "input.h"
 #include "log.h"
+#include "meta.h"
+#include "statement.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,6 +60,7 @@ int main(int argc, char **argv) {
 
   log_debug("starting gnaro repl...");
 
+  // Start REPL loop
   InputBuffer *input_buffer = input_new_buffer();
   while (true) {
     printf("gnaro> ");
@@ -67,11 +70,32 @@ int main(int argc, char **argv) {
       goto cleanup;
     }
 
-    if (strcmp(input_buffer->buffer, ".exit") == 0) {
-      goto cleanup;
-    } else {
-      log_error("Unrecognized command '%s'.\n", input_buffer->buffer);
+    // Meta commands start with a '.'
+    if (input_buffer->buffer[0] == '.') {
+      switch (meta_execute_command(input_buffer)) {
+      case (META_COMMAND_SUCCESS):
+        continue;
+      case (META_COMMAND_EXIT):
+        goto cleanup;
+      case (META_COMMAND_UNRECOGNIZED):
+        log_error("unrecognized command '%s'.", input_buffer->buffer);
+        continue;
+      }
     }
+
+    // Prepare statement for SQL operations
+    Statement statement;
+    switch (statement_prepare(input_buffer, &statement)) {
+    case (STATEMENT_PREPARE_SUCCESS):
+      break;
+    case (STATEMENT_PREPARE_UNRECOGNIZED):
+      log_error("unrecognized keyword at start of '%s'.", input_buffer->buffer);
+      continue;
+    }
+
+    // Execute statement
+    statement_execute(&statement);
+    log_info("statement executed");
   }
 
 cleanup:
