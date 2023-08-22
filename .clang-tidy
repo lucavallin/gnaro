@@ -17,7 +17,8 @@ Checks: "-*,\
   -cert-msc50-cpp, \
   -cert-msc51-cpp, \
   -cert-dcl37-c, \
-  -cert-dcl51-cpp,
+  -cert-dcl51-cpp, \
+  -cert-err34-c, \
   clang-analyzer-*,\
   -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,\
   concurrency-*,\

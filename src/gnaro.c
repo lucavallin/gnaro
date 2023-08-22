@@ -3,6 +3,7 @@
 #include "log.h"
 #include "meta.h"
 #include "statement.h"
+#include "table.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,8 +61,10 @@ int main(int argc, char **argv) {
 
   log_debug("starting gnaro repl...");
 
-  // Start REPL loop
+  Table *table = table_new();
   InputBuffer *input_buffer = input_new_buffer();
+
+  // Start REPL loop
   while (true) {
     printf("gnaro> ");
 
@@ -88,14 +91,26 @@ int main(int argc, char **argv) {
     switch (statement_prepare(input_buffer, &statement)) {
     case (STATEMENT_PREPARE_SUCCESS):
       break;
+    case (STATEMENT_PREPARE_SYNTAX_ERROR):
+      log_error("syntax error. could not parse statement.");
+      continue;
     case (STATEMENT_PREPARE_UNRECOGNIZED):
       log_error("unrecognized keyword at start of '%s'.", input_buffer->buffer);
       continue;
     }
 
     // Execute statement
-    statement_execute(&statement);
-    log_info("statement executed");
+    switch (statement_execute(&statement, table)) {
+    case (STATEMENT_EXECUTE_SUCCESS):
+      log_info("statement executed");
+      break;
+    case (STATEMENT_EXECUTE_TABLE_FULL):
+      log_error("statement failed: table full.");
+      break;
+    default:
+      log_error("unknown error executing statement.");
+      break;
+    }
   }
 
 cleanup:
@@ -103,6 +118,8 @@ cleanup:
   log_info("freeing resources...");
   log_info("freeing input buffer...");
   input_close_buffer(input_buffer);
+  log_info("freeing table...");
+  table_free(table);
 
 exit:
   log_debug("freeing argtable...");
