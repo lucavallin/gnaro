@@ -131,3 +131,8 @@ In the future, suitable tools for automated testing and documentation might be a
 - **Why C?** I haven't written much C since college and nostalgia got me.
 - **What does "gnaro" mean?** It's [Venetian](https://vec.wikipedia.org/wiki/Gnaro) for "nest".
 - **Nice logo, did you design it yourself?** Kind of, I asked Midjourney to come up with some designs.
+
+## TODO
+
+- Ensure logging and comments are consistent, exhaustive and useful
+- Address TODOs in the code and linting errors
