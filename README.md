@@ -82,9 +82,6 @@ $ make clean
 
 # Generate compilation database for Clang tools
 $ make bear
-
-# Generate docs with clang-doc
-$ make docs
 ```
 
 Furthermore, the project includes a [Visual Studio Code](https://code.visualstudio.com/) configuration in `.vscode/` that can be used to run the built-in debugger.

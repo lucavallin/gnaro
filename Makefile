@@ -134,8 +134,4 @@ clean:
 bear:
 	bear --exclude $(LIB_DIR) make $(GNARO)
 
-# Run clang-doc to generate documentation
-docs: bear
-	clang-doc-18 --project-name=$(GNARO) --format=md --executor=all-TUs compile_commands.json
-
-.PHONY: lint format check setup dir clean bear docs
+.PHONY: lint format check setup dir clean bear
