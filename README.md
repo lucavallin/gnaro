@@ -139,3 +139,4 @@ At the moment, the project does not contain any automated tests but `Cunit` is s
 
 - Ensure logging and comments are consistent, exhaustive and useful
 - Address TODOs in the code and linting errors
+- Reduce dependencies between modules and with the main executable

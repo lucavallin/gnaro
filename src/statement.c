@@ -9,6 +9,7 @@
 #include <string.h>
 
 // Convert user input into an internal representation
+// statement_prepare roughly corresponds to SQL Command Processor in SQLite
 StatementPrepareResult statement_prepare(InputBuffer *input_buffer,
                                          Statement *statement) {
 
@@ -64,6 +65,7 @@ StatementPrepareResult statement_prepare_insert(InputBuffer *input_buffer,
 }
 
 // Execute the statement
+// statement_execute roughly corresponds to the Virtual Machine in SQLite
 StatementExecuteResult statement_execute(Statement *statement, Table *table) {
   switch (statement->type) {
   case (STATEMENT_INSERT):

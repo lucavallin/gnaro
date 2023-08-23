@@ -14,8 +14,8 @@ enum {
   ARGTABLE_ARG_MAX = 20
 };
 
-/* global arg_xxx structs */
 struct arg_lit *help, *version;
+struct arg_str *dbf;
 struct arg_lit *vrb;
 struct arg_end *end;
 
@@ -25,6 +25,8 @@ int main(int argc, char **argv) {
       help = arg_litn(NULL, "help", 0, 1, "display this help and exit"),
       version =
           arg_litn(NULL, "version", 0, 1, "display version info and exit"),
+      dbf =
+          arg_strn("d", "database", "<string>", 1, 1, "path to database file"),
       vrb = arg_litn("v", "verbosity", 0, 1, "verbose output"),
       end = arg_end(ARGTABLE_ARG_MAX),
   };
@@ -41,7 +43,7 @@ int main(int argc, char **argv) {
     arg_print_syntax(stdout, argtable, "\n");
     arg_print_glossary(stdout, argtable, "  %-25s %s\n");
     exitcode = 0;
-    goto exit;
+    goto exithard;
   }
 
   // If the parser returned any errors then display them and exit
@@ -50,7 +52,7 @@ int main(int argc, char **argv) {
     arg_print_errors(stdout, end, progname);
     printf("Try '%s --help' for more information.\n", progname);
     exitcode = 1;
-    goto exit;
+    goto exithard;
   }
 
   // Set verbosity level
@@ -61,7 +63,7 @@ int main(int argc, char **argv) {
 
   log_debug("starting gnaro repl...");
 
-  Table *table = table_new();
+  Table *table = table_db_open(dbf->sval[0]);
   InputBuffer *input_buffer = input_new_buffer();
 
   // Start REPL loop
@@ -130,11 +132,13 @@ cleanup:
   log_info("freeing input buffer...");
   input_close_buffer(input_buffer);
   log_info("freeing table...");
-  table_free(table);
+  table_db_close(table);
 
 exit:
   log_debug("freeing argtable...");
-  arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
   log_info("so long and thanks for all the wasps!");
+
+exithard:
+  arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
   return exitcode;
 }

@@ -6,8 +6,10 @@
 void row_serialize(Row *source, void *destination) {
   log_debug("serializing row...");
   memcpy(destination + ID_OFFSET, &(source->id), ID_SIZE);
-  memcpy(destination + USERNAME_OFFSET, &(source->username), USERNAME_SIZE);
-  memcpy(destination + EMAIL_OFFSET, &(source->email), EMAIL_SIZE);
+  // strncpy ensures that all bytes are initialized, even if the string is not
+  // as long as the field
+  strncpy(destination + USERNAME_OFFSET, source->username, USERNAME_SIZE);
+  strncpy(destination + EMAIL_OFFSET, source->email, EMAIL_SIZE);
 }
 
 void row_deserialize(void *source, Row *destination) {
