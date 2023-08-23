@@ -16,29 +16,6 @@
             "-I./lib/log",
             "-Oz",
             "-o",
-            "./build/gnaro.o",
-            "src/gnaro.c"
-        ],
-        "directory": "/workspaces/gnaro",
-        "file": "src/gnaro.c"
-    },
-    {
-        "arguments": [
-            "clang-18",
-            "-c",
-            "-std=gnu17",
-            "-D",
-            "_GNU_SOURCE",
-            "-D",
-            "__STDC_WANT_LIB_EXT1__",
-            "-Wall",
-            "-Wextra",
-            "-pedantic",
-            "-I./include",
-            "-I./lib/argtable",
-            "-I./lib/log",
-            "-Oz",
-            "-o",
             "./build/row.o",
             "src/row.c"
         ],
@@ -62,11 +39,34 @@
             "-I./lib/log",
             "-Oz",
             "-o",
-            "./build/table.o",
-            "src/table.c"
+            "./build/gnaro.o",
+            "src/gnaro.c"
         ],
         "directory": "/workspaces/gnaro",
-        "file": "src/table.c"
+        "file": "src/gnaro.c"
+    },
+    {
+        "arguments": [
+            "clang-18",
+            "-c",
+            "-std=gnu17",
+            "-D",
+            "_GNU_SOURCE",
+            "-D",
+            "__STDC_WANT_LIB_EXT1__",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-I./include",
+            "-I./lib/argtable",
+            "-I./lib/log",
+            "-Oz",
+            "-o",
+            "./build/statement.o",
+            "src/statement.c"
+        ],
+        "directory": "/workspaces/gnaro",
+        "file": "src/statement.c"
     },
     {
         "arguments": [
@@ -108,11 +108,11 @@
             "-I./lib/log",
             "-Oz",
             "-o",
-            "./build/meta.o",
-            "src/meta.c"
+            "./build/table.o",
+            "src/table.c"
         ],
         "directory": "/workspaces/gnaro",
-        "file": "src/meta.c"
+        "file": "src/table.c"
     },
     {
         "arguments": [
@@ -131,10 +131,33 @@
             "-I./lib/log",
             "-Oz",
             "-o",
-            "./build/statement.o",
-            "src/statement.c"
+            "./build/pager.o",
+            "src/pager.c"
         ],
         "directory": "/workspaces/gnaro",
-        "file": "src/statement.c"
+        "file": "src/pager.c"
+    },
+    {
+        "arguments": [
+            "clang-18",
+            "-c",
+            "-std=gnu17",
+            "-D",
+            "_GNU_SOURCE",
+            "-D",
+            "__STDC_WANT_LIB_EXT1__",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-I./include",
+            "-I./lib/argtable",
+            "-I./lib/log",
+            "-Oz",
+            "-o",
+            "./build/meta.o",
+            "src/meta.c"
+        ],
+        "directory": "/workspaces/gnaro",
+        "file": "src/meta.c"
     }
 ]
