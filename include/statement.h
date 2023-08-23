@@ -14,8 +14,10 @@ enum {
 // statement.
 typedef enum {
   STATEMENT_PREPARE_SUCCESS,
-  STATEMENT_PREPARE_UNRECOGNIZED,
+  STATEMENT_PREPARE_STRING_TOO_LONG,
+  STATEMENT_PREPARE_NEGATIVE_ID,
   STATEMENT_PREPARE_SYNTAX_ERROR,
+  STATEMENT_PREPARE_UNRECOGNIZED,
 } StatementPrepareResult;
 
 // StatementExecuteResult is an enum that represents the result of executing a
@@ -38,6 +40,10 @@ typedef struct {
 // statement_prepare prepares a statement.
 StatementPrepareResult statement_prepare(InputBuffer *input_buffer,
                                          Statement *statement);
+
+// statement_prepare_insert prepares an insert statement.
+StatementPrepareResult statement_prepare_insert(InputBuffer *input_buffer,
+                                                Statement *statement);
 
 // statement_execute executes a statement.
 StatementExecuteResult statement_execute(Statement *statement, Table *table);

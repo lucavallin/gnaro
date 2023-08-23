@@ -21,6 +21,7 @@ Checks: "-*,\
   -cert-err34-c, \
   clang-analyzer-*,\
   -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,\
+  -clang-analyzer-security.insecureAPI.strcpy, \
   concurrency-*,\
   -concurrency-mt-unsafe, \
   linuxkernel-*,\

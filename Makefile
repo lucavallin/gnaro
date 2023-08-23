@@ -106,10 +106,7 @@ setup:
 	@rm llvm.sh
 
 	# Install Clang development tools
-	@sudo apt install -y clang-format-18 clang-tidy-18 clang-tools clangd valgrind
-
-	# Install non-standard system libraries
-	@sudo apt install -y libseccomp-dev libcap-dev
+	@sudo apt install -y clang-tools-18 clang-18-doc valgrind bear
 
 	# Install CUnit testing framework
 	@sudo apt install -y libcunit1 libcunit1-doc libcunit1-dev
@@ -133,4 +130,12 @@ dir:
 clean:
 	@rm -rf $(BUILD_DIR) $(BIN_DIR)
 
-.PHONY: lint format check setup dir clean deps
+# Run bear to generate compile_commands.json
+bear:
+	bear --exclude $(LIB_DIR) make $(GNARO)
+
+# Run clang-doc to generate documentation
+docs: bear
+	clang-doc-18 --project-name=$(GNARO) --format=md --executor=all-TUs compile_commands.json
+
+.PHONY: lint format check setup dir clean bear docs

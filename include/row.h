@@ -4,11 +4,11 @@
 #include <stdint.h>
 
 // Hardcoded Row for now.
-enum { COLUMN_USERNAME_SIZE = 32, COLUMN_EMAIL_SIZE = 255 };
+enum { ROW_COLUMN_USERNAME_SIZE = 32, ROW_COLUMN_EMAIL_SIZE = 255 };
 typedef struct {
   uint32_t id;
-  char username[COLUMN_USERNAME_SIZE];
-  char email[COLUMN_EMAIL_SIZE];
+  char username[ROW_COLUMN_USERNAME_SIZE + 1];
+  char email[ROW_COLUMN_EMAIL_SIZE + 1];
 } Row;
 
 // Compact representation of a row, hardcoded for now

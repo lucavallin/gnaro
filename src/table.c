@@ -22,18 +22,25 @@ void *table_row_slot(Table *table, uint32_t row_num) {
   return page + byte_offset;
 }
 
-Table *table_new() {
+Table *table_new(void) {
+  log_debug("allocating table...");
   Table *table = (Table *)malloc(sizeof(Table));
   table->num_rows = 0;
+
   for (uint32_t i = 0; i < TABLE_MAX_PAGES; i++) {
+    log_debug("initializing table page %d...", i);
     table->pages[i] = NULL;
   }
+
   return table;
 }
 
 void table_free(Table *table) {
   for (int i = 0; table->pages[i]; i++) {
+    log_debug("freeing page %d...", i);
     free(table->pages[i]);
   }
+
   free(table);
+  log_debug("table freed...");
 }

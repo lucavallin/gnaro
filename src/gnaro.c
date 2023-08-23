@@ -87,19 +87,30 @@ int main(int argc, char **argv) {
     }
 
     // Prepare statement for SQL operations
+    log_debug("preparing statement...");
     Statement statement;
     switch (statement_prepare(input_buffer, &statement)) {
     case (STATEMENT_PREPARE_SUCCESS):
+      log_debug("statement prepared...");
       break;
+    case (STATEMENT_PREPARE_NEGATIVE_ID):
+      log_error("failed to prepare statement: id must be greater than zero.");
+      continue;
+    case (STATEMENT_PREPARE_STRING_TOO_LONG):
+      log_error("failed to prepare statement: string is too long.");
+      continue;
     case (STATEMENT_PREPARE_SYNTAX_ERROR):
-      log_error("syntax error. could not parse statement.");
+      log_error("failed to prepare statement: syntax error.");
       continue;
     case (STATEMENT_PREPARE_UNRECOGNIZED):
-      log_error("unrecognized keyword at start of '%s'.", input_buffer->buffer);
+      log_error(
+          "failed to prepare statement: unrecognized keyword at start of '%s'.",
+          input_buffer->buffer);
       continue;
     }
 
     // Execute statement
+    log_debug("executing statement...");
     switch (statement_execute(&statement, table)) {
     case (STATEMENT_EXECUTE_SUCCESS):
       log_info("statement executed");

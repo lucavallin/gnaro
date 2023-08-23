@@ -79,6 +79,12 @@ $ make check
 
 # Clean the build
 $ make clean
+
+# Generate compilation database for Clang tools
+$ make bear
+
+# Generate docs with clang-doc
+$ make docs
 ```
 
 Furthermore, the project includes a [Visual Studio Code](https://code.visualstudio.com/) configuration in `.vscode/` that can be used to run the built-in debugger.
@@ -88,22 +94,23 @@ Furthermore, the project includes a [Visual Studio Code](https://code.visualstud
 The project is structured as follows:
 
 ```txt
-├── .devcontainer       configuration for GitHub Codespaces
-├── .github             configuration GitHub Actions and other GitHub features
-├── .vscode             configuration for Visual Studio Code
-├── bin                 the executable (created by make)
-├── build               intermediate build files e.g. *.o (created by make)
-├── docs                documentation
-├── include             header files
-├── lib                 third-party libraries
-├── scripts             scripts for setup and other tasks
-├── src                 C source files
-│   ├── gnaro.c         (main) Entry point for the CLI
+├── .devcontainer           configuration for GitHub Codespaces
+├── .github                 configuration GitHub Actions and other GitHub features
+├── .vscode                 configuration for Visual Studio Code
+├── bin                     the executable (created by make)
+├── build                   intermediate build files e.g. *.o (created by make)
+├── docs                    documentation
+├── include                 header files
+├── lib                     third-party libraries
+├── scripts                 scripts for setup and other tasks
+├── src                     C source files
+│   ├── gnaro.c             (main) Entry point for the CLI
 │   └── *.c
-├── tests               contains tests
-├── .clang-format       configuration for the formatter
-├── .clang-tidy         configuration for the linter
+├── tests                   contains tests
+├── .clang-format           configuration for the formatter
+├── .clang-tidy             configuration for the linter
 ├── .gitignore
+├── compile_commands.json   compilation database for clang tools
 ├── LICENSE
 ├── Makefile
 └── README.md
@@ -111,8 +118,7 @@ The project is structured as follows:
 
 ## Testing and documentation
 
-At the moment, the project does not contain any automated tests or tools to document the code.
-In the future, suitable tools for automated testing and documentation might be added.
+At the moment, the project does not contain any automated tests but `Cunit` is set up and a basic test can be found at [gnaro_test.c](tests/gnaro_test.c). Documentation is generated using [clang-doc](https://clang.llvm.org/extra/clang-doc.html) and can be found at [docs/](docs/).
 
 ## Limitations
 

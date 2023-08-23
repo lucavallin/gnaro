@@ -54,3 +54,4 @@ dkms.conf
 # Gnaro
 build/
 bin/
+.cache/
