@@ -138,5 +138,6 @@ At the moment, the project does not contain any automated tests but `Cunit` is s
 ## TODO
 
 - Ensure logging and comments are consistent, exhaustive and useful
-- Address TODOs in the code and linting errors
+- Address TODOs in the code and linting errors (can any be re-enabled?)
 - Reduce dependencies between modules and with the main executable
+- Handle exits in the main executable
