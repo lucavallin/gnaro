@@ -24,6 +24,13 @@ Pager *pager_open(const char *filename) {
   Pager *pager = malloc(sizeof(Pager));
   pager->file_descriptor = fd;
   pager->file_length = file_length;
+  pager->num_pages = (file_length / PAGER_PAGE_SIZE);
+
+  if (file_length % PAGER_PAGE_SIZE != 0) {
+    log_error(
+        "database does not container a whole number of pages: corrupt file");
+    exit(EXIT_FAILURE);
+  }
 
   // Initialize pages to NULL
   for (uint32_t i = 0; i < PAGER_MAX_PAGES; i++) {
@@ -77,6 +84,11 @@ void *pager_get_page(Pager *pager, uint32_t page_num) {
 
     log_debug("page %d loaded...", page_num);
     pager->pages[page_num] = page;
+
+    log_debug("setting num_pages to %d...", page_num + 1);
+    if (page_num >= pager->num_pages) {
+      pager->num_pages = page_num + 1;
+    }
   }
 
   log_debug("page %d found...", page_num);
@@ -84,10 +96,7 @@ void *pager_get_page(Pager *pager, uint32_t page_num) {
   return pager->pages[page_num];
 }
 
-// The length of the file encodes how many rows are in the database, so we need
-// to write a partial page at the end of the file, therefore pager_flush()
-// takes both a page number and a size.
-void pager_flush(Pager *pager, uint32_t page_num, uint32_t size) {
+void pager_flush(Pager *pager, uint32_t page_num) {
   log_debug("flushing page %d...", page_num);
   if (pager->pages[page_num] == NULL) {
     log_error("tried to flush null page");
@@ -106,7 +115,7 @@ void pager_flush(Pager *pager, uint32_t page_num, uint32_t size) {
 
   log_debug("writing page %d...", page_num);
   ssize_t bytes_written =
-      write(pager->file_descriptor, pager->pages[page_num], size);
+      write(pager->file_descriptor, pager->pages[page_num], PAGER_PAGE_SIZE);
 
   if (bytes_written == -1) {
     log_error("error writing page: %m");

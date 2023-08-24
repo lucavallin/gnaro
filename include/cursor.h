@@ -8,7 +8,8 @@
 // Cursor represents a position in a table
 typedef struct {
   Table *table;
-  uint32_t row_num;
+  uint32_t page_num;
+  uint32_t cell_num;
   // Indicates a position past the end of the table where a new row would be
   // inserted
   bool end_of_table;

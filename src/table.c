@@ -26,43 +26,22 @@ void table_db_close(Table *table) {
   log_debug("closing database...");
 
   Pager *pager = table->pager;
-  uint32_t num_full_pages = table->num_rows / ROWS_PER_PAGE;
 
-  log_debug("flushing %d full pages...", num_full_pages);
-  for (uint32_t i = 0; i < num_full_pages; i++) {
+  log_debug("flushing %d pages...", pager->num_pages);
+  for (uint32_t i = 0; i < pager->num_pages; i++) {
     if (pager->pages[i] == NULL) {
       log_debug("page %d is empty, skipping...", i);
       continue;
     }
 
     log_debug("flushing page %d...", i);
-    pager_flush(pager, i, PAGER_PAGE_SIZE);
+    pager_flush(pager, i);
 
     log_debug("freeing page %d...", i);
     free(pager->pages[i]);
 
     log_debug("setting page %d to NULL...", i);
     pager->pages[i] = NULL;
-  }
-
-  // There may be a partial page to write to the end of the file
-  // This should not be needed after we switch to a B-tree
-  log_debug("flushing partial page(s)...");
-
-  uint32_t num_additional_rows = table->num_rows % ROWS_PER_PAGE;
-  if (num_additional_rows > 0) {
-    uint32_t page_num = num_full_pages;
-    if (pager->pages[page_num] != NULL) {
-      log_debug("flushing page %d...", page_num);
-
-      pager_flush(pager, page_num, num_additional_rows * ROW_SIZE);
-
-      log_debug("freeing page %d...", page_num);
-      free(pager->pages[page_num]);
-
-      log_debug("setting page %d to NULL...", page_num);
-      pager->pages[page_num] = NULL;
-    }
   }
 
   log_debug("closing file descriptor...");
