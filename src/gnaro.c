@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
 
     // Meta commands start with a '.'
     if (input_buffer->buffer[0] == '.') {
-      switch (meta_execute_command(input_buffer)) {
+      switch (meta_execute_command(input_buffer, table)) {
       case (META_COMMAND_SUCCESS):
         continue;
       case (META_COMMAND_EXIT):

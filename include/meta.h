@@ -2,6 +2,7 @@
 #define META_H
 
 #include "input.h"
+#include "table.h"
 
 // MetaCommandResult is an enum that represents the result of executing a meta
 // command.
@@ -12,6 +13,6 @@ typedef enum {
 } MetaCommandResult;
 
 // Execute a meta command (e.g. .exit) and return the result.
-MetaCommandResult meta_execute_command(InputBuffer *input_buffer);
+MetaCommandResult meta_execute_command(InputBuffer *input_buffer, Table *table);
 
 #endif

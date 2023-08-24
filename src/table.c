@@ -1,7 +1,7 @@
 #include "table.h"
 #include "log.h"
+#include "node.h"
 #include "pager.h"
-#include "row.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -10,12 +10,17 @@
 // initializing a pager and a table data structure
 Table *table_db_open(const char *filename) {
   Pager *pager = pager_open(filename);
-  uint32_t num_rows = pager->file_length / ROW_SIZE;
 
   log_debug("allocating table...");
   Table *table = malloc(sizeof(Table));
   table->pager = pager;
-  table->num_rows = num_rows;
+  table->root_page_num = 0;
+
+  if (pager->num_pages == 0) {
+    log_debug("database file is empty, initializing new database...");
+    void *root_node = pager_get_page(pager, 0);
+    node_leaf_initialize(root_node);
+  }
 
   return table;
 }

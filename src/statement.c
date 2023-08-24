@@ -2,6 +2,8 @@
 #include "cursor.h"
 #include "input.h"
 #include "log.h"
+#include "node.h"
+#include "pager.h"
 #include "row.h"
 #include "table.h"
 #include <stdio.h>
@@ -85,7 +87,8 @@ StatementExecuteResult statement_execute(Statement *statement, Table *table) {
 StatementExecuteResult statement_execute_insert(Statement *statement,
                                                 Table *table) {
   log_debug("executing insert statement...");
-  if (table->num_rows >= TABLE_MAX_ROWS) {
+  void *node = pager_get_page(table->pager, table->root_page_num);
+  if ((*node_leaf_num_cells(node) >= LEAF_NODE_MAX_CELLS)) {
     log_warn("table is full");
     return STATEMENT_EXECUTE_TABLE_FULL;
   }
@@ -93,8 +96,7 @@ StatementExecuteResult statement_execute_insert(Statement *statement,
   log_debug("serializing row for insert...");
   Row *row_to_insert = &(statement->row_to_insert);
   Cursor *cursor = cursor_at_end(table);
-  row_serialize(row_to_insert, cursor_value(cursor));
-  table->num_rows += 1;
+  node_leaf_insert(cursor, row_to_insert->id, row_to_insert);
 
   cursor_close(cursor);
 

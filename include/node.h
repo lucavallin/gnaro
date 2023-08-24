@@ -1,6 +1,7 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include "cursor.h"
 #include "pager.h"
 #include "row.h"
 #include <stdint.h>
@@ -57,5 +58,11 @@ void *node_leaf_value(void *node, uint32_t cell_num);
 
 // node_leaf_initialize initializes a leaf node
 void node_leaf_initialize(void *node);
+
+// node_leaf_insert inserts a row into a leaf node
+void node_leaf_insert(Cursor *cursor, uint32_t key, Row *value);
+
+// node_leaf_print prints the btree to stdout
+void node_leaf_print(void *node);
 
 #endif
