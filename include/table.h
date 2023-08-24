@@ -31,7 +31,4 @@ Table *table_db_open(const char *filename);
 // Closes a connection to a database.
 void table_db_close(Table *table);
 
-// Handle memory I/O for a particular row.
-void *table_row_slot(Table *table, uint32_t row_num);
-
 #endif

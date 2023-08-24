@@ -20,16 +20,6 @@ Table *table_db_open(const char *filename) {
   return table;
 }
 
-void *table_row_slot(Table *table, uint32_t row_num) {
-  uint32_t page_num = row_num / ROWS_PER_PAGE;
-
-  void *page = pager_get_page(table->pager, page_num);
-
-  uint32_t row_offset = row_num % ROWS_PER_PAGE;
-  uint32_t byte_offset = row_offset * ROW_SIZE;
-  return page + byte_offset;
-}
-
 // table_db_close flushes the page cache to disk, closes the database file and
 // then frees the memory for the Pager and Table data structures
 void table_db_close(Table *table) {

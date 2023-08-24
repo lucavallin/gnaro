@@ -1,9 +1,9 @@
 #include "statement.h"
+#include "cursor.h"
 #include "input.h"
 #include "log.h"
 #include "row.h"
 #include "table.h"
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -92,8 +92,11 @@ StatementExecuteResult statement_execute_insert(Statement *statement,
 
   log_debug("serializing row for insert...");
   Row *row_to_insert = &(statement->row_to_insert);
-  row_serialize(row_to_insert, table_row_slot(table, table->num_rows));
+  Cursor *cursor = cursor_at_end(table);
+  row_serialize(row_to_insert, cursor_value(cursor));
   table->num_rows += 1;
+
+  cursor_close(cursor);
 
   log_debug("inserted row %d", row_to_insert->id);
   return STATEMENT_EXECUTE_SUCCESS;
@@ -101,16 +104,21 @@ StatementExecuteResult statement_execute_insert(Statement *statement,
 
 StatementExecuteResult statement_execute_select(Statement *statement,
                                                 Table *table) {
-  Row row;
   log_debug("executing select statement...");
+  log_debug("getting cursor at end of table...");
+  Cursor *cursor = cursor_at_start(table);
 
-  // Scan through all rows in the table
-  log_debug("scanning table...");
-  for (uint32_t i = 0; i < table->num_rows; i++) {
-    row_deserialize(table_row_slot(table, i), &row);
-    // TODO: move to main?
+  Row row;
+  while (!(cursor->end_of_table)) {
+    log_debug("deserializing row...");
+    row_deserialize(cursor_value(cursor), &row);
     row_print(&row);
+    log_debug("advancing cursor...");
+    cursor_advance(cursor);
   }
+
+  log_debug("closing cursor...");
+  cursor_close(cursor);
 
   log_debug("select statement executed");
   return STATEMENT_EXECUTE_SUCCESS;
