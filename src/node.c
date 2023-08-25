@@ -253,29 +253,36 @@ void node_set_root(void *node, bool is_root) {
 }
 
 void node_internal_initialize(void *node) {
+  log_debug("initializing internal node...");
   node_set_type(node, NODE_TYPE_INTERNAL);
   node_set_root(node, false);
   *node_internal_num_keys(node) = 0;
 }
 
 Cursor *node_internal_find(Table *table, uint32_t page_num, uint32_t key) {
+  log_debug("finding key %d in internal node...", key);
   void *node = pager_get_page(table->pager, page_num);
   uint32_t num_keys = *node_internal_num_keys(node);
 
-  /* Binary search to find index of child to search */
+  // Binary search to find index of child to search
   uint32_t min_index = 0;
-  uint32_t max_index = num_keys; /* there is one more child than key */
+  uint32_t max_index = num_keys;
 
+  log_debug("binary searching for key %d...", key);
   while (min_index != max_index) {
+    log_debug("min_index: %d, max_index: %d...", min_index, max_index);
     uint32_t index = (min_index + max_index) / 2;
     uint32_t key_to_right = *node_internal_key(node, index);
     if (key_to_right >= key) {
+      log_debug("key is less than key at index %d...", index);
       max_index = index;
     } else {
+      log_debug("key is greater than key at index %d...", index);
       min_index = index + 1;
     }
   }
 
+  log_debug("getting child %d from node...", min_index);
   uint32_t child_num = *node_internal_child(node, min_index);
   void *child = pager_get_page(table->pager, child_num);
   switch (node_get_type(child)) {
