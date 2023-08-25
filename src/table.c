@@ -2,6 +2,7 @@
 #include "log.h"
 #include "node.h"
 #include "pager.h"
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -20,6 +21,7 @@ Table *table_db_open(const char *filename) {
     log_debug("database file is empty, initializing new database...");
     void *root_node = pager_get_page(pager, 0);
     node_leaf_initialize(root_node);
+    node_set_root(root_node, true);
   }
 
   return table;

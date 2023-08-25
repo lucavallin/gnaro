@@ -18,8 +18,9 @@ typedef struct {
 // Create a cursor at the beginning of the table
 Cursor *cursor_at_start(Table *table);
 
-// Create a cursor at the end of the table
-Cursor *cursor_at_end(Table *table);
+// Find the position of the given key or where it should be inserted if it is
+// not present
+Cursor *cursor_find_key(Table *table, uint32_t key);
 
 // Move a cursor to the next row
 void cursor_advance(Cursor *cursor);

@@ -6,6 +6,7 @@
 #include "pager.h"
 #include "row.h"
 #include "table.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -46,6 +47,8 @@ StatementPrepareResult statement_prepare_insert(InputBuffer *input_buffer,
     return STATEMENT_PREPARE_SYNTAX_ERROR;
   }
 
+  log_debug("requested statement: %s %s %s %s...", keyword, id_string, username,
+            email);
   log_debug("validating insert statement...");
   int id = atoi(id_string);
   if (id < 0) {
@@ -88,14 +91,20 @@ StatementExecuteResult statement_execute_insert(Statement *statement,
                                                 Table *table) {
   log_debug("executing insert statement...");
   void *node = pager_get_page(table->pager, table->root_page_num);
-  if ((*node_leaf_num_cells(node) >= LEAF_NODE_MAX_CELLS)) {
-    log_warn("table is full");
-    return STATEMENT_EXECUTE_TABLE_FULL;
-  }
+  uint32_t num_cells = (*node_leaf_num_cells(node));
 
   log_debug("serializing row for insert...");
   Row *row_to_insert = &(statement->row_to_insert);
-  Cursor *cursor = cursor_at_end(table);
+  uint32_t key_to_insert = row_to_insert->id;
+  Cursor *cursor = cursor_find_key(table, key_to_insert);
+
+  if (cursor->cell_num < num_cells) {
+    uint32_t key_at_index = *node_leaf_key(node, cursor->cell_num);
+    if (key_at_index == key_to_insert) {
+      return STATEMENT_EXECUTE_DUPLICATE_KEY;
+    }
+  }
+
   node_leaf_insert(cursor, row_to_insert->id, row_to_insert);
 
   cursor_close(cursor);

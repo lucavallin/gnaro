@@ -120,6 +120,9 @@ int main(int argc, char **argv) {
     case (STATEMENT_EXECUTE_TABLE_FULL):
       log_error("statement failed: table full.");
       break;
+    case (STATEMENT_EXECUTE_DUPLICATE_KEY):
+      log_error("statement failed: duplicate key.");
+      break;
     default:
       log_error("unknown error executing statement.");
       break;

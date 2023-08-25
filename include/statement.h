@@ -25,6 +25,7 @@ typedef enum {
 typedef enum {
   STATEMENT_EXECUTE_SUCCESS,
   STATEMENT_EXECUTE_TABLE_FULL,
+  STATEMENT_EXECUTE_DUPLICATE_KEY,
 } StatementExecuteResult;
 
 // StatementType is an enum that represents the type of a statement.

@@ -1,5 +1,5 @@
 # <img src="./docs/gnaro.png" style="width:40px;padding-right:10px;margin-bottom:-8px;"> gnaro
-A SQLite-like database written in C for educational purposes. `gnaro` takes SQLite as a reference because of the limited feature set, and therefore complexity, when compared to other databases. SQLite consists roughly of the following components:
+A half-baked "database" inspired by SQLite written in C for educational purposes. `gnaro` takes SQLite as a reference because of the limited feature set, and therefore complexity, when compared to other databases. SQLite consists roughly of the following components:
 
 - Tokenizer
 - Parser
@@ -119,7 +119,13 @@ At the moment, the project does not contain any automated tests but `Cunit` is s
 
 ## Limitations
 
-1.
+`gnaro` is an extremely primitive "database" and all it supports is:
+
+ 1. A single table
+ 1. Rows with hardcoded columns
+ 1. "insert" and "select" statements
+
+It would be nice to at least support multiple tables, non-harcoded columns, "update" and "delete" statements. Unfortunately the goal of this project is only to learn more about databases and I am reasonably satisfied with the current state.
 
 ## Improvements
 
@@ -138,6 +144,6 @@ At the moment, the project does not contain any automated tests but `Cunit` is s
 ## TODO
 
 - Ensure logging and comments are consistent, exhaustive and useful
-- Address TODOs in the code and linting errors (can any be re-enabled?)
+- Address linting errors (can any be re-enabled?)
 - Reduce dependencies between modules and with the main executable
 - Handle exits in the main executable

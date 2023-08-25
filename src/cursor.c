@@ -22,19 +22,18 @@ Cursor *cursor_at_start(Table *table) {
   return cursor;
 }
 
-Cursor *cursor_at_end(Table *table) {
-  log_debug("allocating cursor at end of table...");
-  Cursor *cursor = malloc(sizeof(Cursor));
-  cursor->table = table;
-  cursor->page_num = table->root_page_num;
+// Search the tree for the given key.
+Cursor *cursor_find_key(Table *table, uint32_t key) {
+  log_debug("finding key %d...", key);
+  uint32_t root_page_num = table->root_page_num;
+  void *root_node = pager_get_page(table->pager, root_page_num);
 
-  log_debug("getting root node...");
-  void *root_node = pager_get_page(table->pager, table->root_page_num);
-  uint32_t num_cells = *node_leaf_num_cells(root_node);
-  cursor->cell_num = num_cells;
-  cursor->end_of_table = true;
-
-  return cursor;
+  if (node_get_type(root_node) == NODE_TYPE_LEAF) {
+    log_debug("searching leaf node...");
+    return node_leaf_find(table, root_page_num, key);
+  } else {
+    return node_internal_find(table, root_page_num, key);
+  }
 }
 
 void cursor_advance(Cursor *cursor) {

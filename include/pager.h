@@ -28,4 +28,7 @@ void *pager_get_page(Pager *pager, uint32_t page_num);
 // pager_flush writes the page with the given page number to disk
 void pager_flush(Pager *pager, uint32_t page_num);
 
+// pager_get_unused_page_num returns the page number of the first unused page
+uint32_t pager_get_unused_page_num(Pager *pager);
+
 #endif

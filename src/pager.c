@@ -124,3 +124,10 @@ void pager_flush(Pager *pager, uint32_t page_num) {
 
   log_debug("written page %d", page_num);
 }
+
+// News pages are always appended to the end of the database file until we start
+// recycling free pages.
+uint32_t pager_get_unused_page_num(Pager *pager) {
+  log_debug("getting unused page number...");
+  return pager->num_pages;
+}
