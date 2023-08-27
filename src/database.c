@@ -1,6 +1,6 @@
 #include "database.h"
+#include "btree.h"
 #include "log.h"
-#include "node.h"
 #include "pager.h"
 #include <stdbool.h>
 #include <stdint.h>
@@ -24,8 +24,8 @@ Database *database_open(const char *filename) {
   if (pager->num_pages == 0) {
     log_debug("database file is empty, initializing new database...");
     void *root_node = pager_get_page(pager, 0);
-    node_leaf_initialize(root_node);
-    node_set_root(root_node, true);
+    btree_node_leaf_init(root_node);
+    btree_node_set_root(root_node, true);
   }
 
   return database;

@@ -1,9 +1,9 @@
 #include "statement.h"
+#include "btree.h"
 #include "cursor.h"
 #include "database.h"
 #include "input.h"
 #include "log.h"
-#include "node.h"
 #include "pager.h"
 #include "row.h"
 #include <stdint.h>
@@ -13,17 +13,15 @@
 
 // Convert user input into an internal representation
 // statement_prepare roughly corresponds to SQL Command Processor in SQLite
-StatementPrepareResult statement_prepare(InputBuffer *input_buffer,
-                                         Statement *statement) {
+StatementPrepareResult statement_prepare(char *query, Statement *statement) {
 
   // strncmp for "insert" since the keyword will be followed by data (e.g.
   // insert 1 lucavallin foo@bar.com)
-  if (strncmp(input_buffer->buffer, "insert", STATEMENT_INSERT_COMMAND_SIZE) ==
-      0) {
+  if (strncmp(query, "insert", STATEMENT_INSERT_COMMAND_SIZE) == 0) {
     log_debug("preparing insert statement...");
-    return statement_prepare_insert(input_buffer, statement);
+    return statement_prepare_insert(query, statement);
   }
-  if (strcmp(input_buffer->buffer, "select") == 0) {
+  if (strcmp(query, "select") == 0) {
     log_debug("preparing select statement...");
     statement->type = STATEMENT_SELECT;
     return STATEMENT_PREPARE_SUCCESS;
@@ -33,12 +31,12 @@ StatementPrepareResult statement_prepare(InputBuffer *input_buffer,
   return STATEMENT_PREPARE_UNRECOGNIZED;
 }
 
-StatementPrepareResult statement_prepare_insert(InputBuffer *input_buffer,
+StatementPrepareResult statement_prepare_insert(char *query,
                                                 Statement *statement) {
   statement->type = STATEMENT_INSERT;
 
   log_debug("parsing insert statement...");
-  char *keyword = strtok(input_buffer->buffer, " ");
+  char *keyword = strtok(query, " ");
   char *id_string = strtok(NULL, " ");
   char *username = strtok(NULL, " ");
   char *email = strtok(NULL, " ");
@@ -92,7 +90,7 @@ StatementExecuteResult statement_execute_insert(Statement *statement,
                                                 Database *database) {
   log_debug("executing insert statement...");
   void *node = pager_get_page(database->pager, database->root_page_num);
-  uint32_t num_cells = (*node_leaf_num_cells(node));
+  uint32_t num_cells = (*btree_node_leaf_num_cells(node));
 
   log_debug("serializing row for insert...");
   Row *row_to_insert = &(statement->row_to_insert);
@@ -100,13 +98,13 @@ StatementExecuteResult statement_execute_insert(Statement *statement,
   Cursor *cursor = cursor_find_key(database, key_to_insert);
 
   if (cursor->cell_num < num_cells) {
-    uint32_t key_at_index = *node_leaf_key(node, cursor->cell_num);
+    uint32_t key_at_index = *btree_node_leaf_key(node, cursor->cell_num);
     if (key_at_index == key_to_insert) {
       return STATEMENT_EXECUTE_DUPLICATE_KEY;
     }
   }
 
-  node_leaf_insert(cursor, row_to_insert->id, row_to_insert);
+  btree_node_leaf_insert(cursor, row_to_insert->id, row_to_insert);
 
   cursor_close(cursor);
 

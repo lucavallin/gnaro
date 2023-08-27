@@ -142,6 +142,8 @@ At the moment, the project does not contain any automated tests but `Cunit` is s
 
 It would be nice to at least support multiple tables, non-harcoded columns, "update" and "delete" statements. Unfortunately the goal of this project is only to learn more about databases and I am reasonably satisfied with the current state.
 
+TODO: Furthermore, exits here and there, dependency between "modules".
+
 ## Improvements
 
 - CMake and Conan are industry standards, so they should be used eventually instead of Make and the current build system. Unfortunately, CMake and Conan also add a lot of complexity which is not needed at this time.
@@ -158,6 +160,6 @@ It would be nice to at least support multiple tables, non-harcoded columns, "upd
 
 ## TODO
 
-- Consolidate naming (node, database)
-- Reduce dependencies between modules and with the main executable (handle prints in input?)
+- Reorder btree.h/c, comments in all H
+- Name and order parameters in functions
 - Ensure logging and comments are consistent, exhaustive and useful

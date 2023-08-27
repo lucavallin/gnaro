@@ -2,7 +2,6 @@
 #define STATEMENT_H
 
 #include "database.h"
-#include "input.h"
 #include "row.h"
 
 enum {
@@ -39,11 +38,10 @@ typedef struct {
 } Statement;
 
 // statement_prepare prepares a statement.
-StatementPrepareResult statement_prepare(InputBuffer *input_buffer,
-                                         Statement *statement);
+StatementPrepareResult statement_prepare(char *query, Statement *statement);
 
 // statement_prepare_insert prepares an insert statement.
-StatementPrepareResult statement_prepare_insert(InputBuffer *input_buffer,
+StatementPrepareResult statement_prepare_insert(char *query,
                                                 Statement *statement);
 
 // statement_execute executes a statement.
