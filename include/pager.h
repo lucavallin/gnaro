@@ -7,7 +7,7 @@ enum {
   // PAGER_MAX_PAGES is the maximum number of pages that can be handled
   PAGER_MAX_PAGES = 100,
   // 4 kilobytes, same size as a virtual memory page in most architectures,
-  // so that a table page corresponds to a single memory page for the OS.
+  // so that a database page corresponds to a single memory page for the OS.
   PAGER_PAGE_SIZE = 4096
 };
 

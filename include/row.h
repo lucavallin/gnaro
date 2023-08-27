@@ -23,10 +23,10 @@ static const uint32_t ROW_EMAIL_OFFSET =
 static const uint32_t ROW_SIZE =
     ROW_ID_SIZE + ROW_USERNAME_SIZE + ROW_EMAIL_SIZE;
 
-// Serialize a row for storage in a table.
+// Serialize a row for storage in a database.
 void row_serialize(Row *source, void *destination);
 
-// Deserialize a row from storage in a table.
+// Deserialize a row from storage in a database.
 void row_deserialize(void *source, Row *destination);
 
 // Print a row to stdout.

@@ -1,17 +1,17 @@
-#ifndef TABLE_H
-#define TABLE_H
+#ifndef DATABASE_H
+#define DATABASE_H
 
 #include "pager.h"
 #include <stdint.h>
 
-// TableResult is an enum that represents the result of a table operation.
+// DatabaseResult is an enum that represents the result of a database operation.
 typedef enum {
-  TABLE_CLOSE_SUCCESS,
-  TABLE_CLOSE_FAIL,
-} TableResult;
+  DATABASE_CLOSE_SUCCESS,
+  DATABASE_CLOSE_FAIL,
+} DatabaseResult;
 
-// Table is a struct that represents a table. It uses a pager to persist data.
-// It roughly corresponds to a B-Tree in SQLite.
+// Database is a struct that represents a database. It uses a pager to persist
+// data. It roughly corresponds to a B-Tree in SQLite.
 //
 // Data will be stored as follows:
 // - Store rows in blocks of memory called pages
@@ -22,12 +22,12 @@ typedef enum {
 typedef struct {
   Pager *pager;
   uint32_t root_page_num;
-} Table;
+} Database;
 
 // Opens a connection to a database.
-Table *table_db_open(const char *filename);
+Database *database_open(const char *filename);
 
 // Closes a connection to a database.
-TableResult table_db_close(Table *table);
+DatabaseResult database_close(Database *database);
 
 #endif

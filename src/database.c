@@ -1,4 +1,4 @@
-#include "table.h"
+#include "database.h"
 #include "log.h"
 #include "node.h"
 #include "pager.h"
@@ -8,18 +8,18 @@
 #include <unistd.h>
 
 // Opens a connection to the database by opening the database file and
-// initializing a pager and a table data structure
-Table *table_db_open(const char *filename) {
+// initializing a pager and a database data structure
+Database *database_open(const char *filename) {
   Pager *pager = pager_open(filename);
   if (pager == NULL) {
     log_error("failed to open database file %s", filename);
     return NULL;
   }
 
-  log_debug("allocating table...");
-  Table *table = malloc(sizeof(Table));
-  table->pager = pager;
-  table->root_page_num = 0;
+  log_debug("allocating database...");
+  Database *database = malloc(sizeof(Database));
+  database->pager = pager;
+  database->root_page_num = 0;
 
   if (pager->num_pages == 0) {
     log_debug("database file is empty, initializing new database...");
@@ -28,15 +28,15 @@ Table *table_db_open(const char *filename) {
     node_set_root(root_node, true);
   }
 
-  return table;
+  return database;
 }
 
-// table_db_close flushes the page cache to disk, closes the database file and
-// then frees the memory for the Pager and Table data structures
-TableResult table_db_close(Table *table) {
+// database_close flushes the page cache to disk, closes the database file and
+// then frees the memory for the Pager and Database data structures
+DatabaseResult database_close(Database *database) {
   log_debug("closing database...");
 
-  Pager *pager = table->pager;
+  Pager *pager = database->pager;
 
   log_debug("flushing %d pages...", pager->num_pages);
   for (uint32_t i = 0; i < pager->num_pages; i++) {
@@ -59,7 +59,7 @@ TableResult table_db_close(Table *table) {
   int result = close(pager->file_descriptor);
   if (result == -1) {
     log_error("failed to close db file: %m");
-    return TABLE_CLOSE_FAIL;
+    return DATABASE_CLOSE_FAIL;
   }
 
   log_debug("freeing pages...");
@@ -77,8 +77,8 @@ TableResult table_db_close(Table *table) {
   log_debug("freeing pager...");
   free(pager);
 
-  log_debug("freeing table...");
-  free(table);
+  log_debug("freeing database...");
+  free(database);
 
-  return TABLE_CLOSE_SUCCESS;
+  return DATABASE_CLOSE_SUCCESS;
 }

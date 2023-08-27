@@ -1,9 +1,9 @@
 #ifndef STATEMENT_H
 #define STATEMENT_H
 
+#include "database.h"
 #include "input.h"
 #include "row.h"
-#include "table.h"
 
 enum {
   // STATEMENT_INSERT_COMMAND_SIZE is the length of the "insert" command.
@@ -47,13 +47,14 @@ StatementPrepareResult statement_prepare_insert(InputBuffer *input_buffer,
                                                 Statement *statement);
 
 // statement_execute executes a statement.
-StatementExecuteResult statement_execute(Statement *statement, Table *table);
+StatementExecuteResult statement_execute(Statement *statement,
+                                         Database *database);
 
 // statement_execute_insert executes an insert statement.
 StatementExecuteResult statement_execute_insert(Statement *statement,
-                                                Table *table);
+                                                Database *database);
 
 // statement_execute_select executes a select statement.
-StatementExecuteResult statement_execute_select(Table *table);
+StatementExecuteResult statement_execute_select(Database *database);
 
 #endif

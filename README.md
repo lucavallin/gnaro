@@ -33,7 +33,7 @@ Tree:
 gnaro> .exit
 16:39:43 INFO  ./src/gnaro.c:139: freeing resources...
 16:39:43 INFO  ./src/gnaro.c:140: freeing input buffer...
-16:39:43 INFO  ./src/gnaro.c:142: freeing table...
+16:39:43 INFO  ./src/gnaro.c:142: freeing database...
 16:39:43 INFO  ./src/gnaro.c:147: so long and thanks for all the wasps!
 ```
 
@@ -136,7 +136,7 @@ At the moment, the project does not contain any automated tests but `Cunit` is s
 
 `gnaro` is an extremely primitive "database" and all it supports is:
 
- 1. A single table
+ 1. A single database
  1. Rows with hardcoded columns
  1. "insert" and "select" statements
 
@@ -158,6 +158,6 @@ It would be nice to at least support multiple tables, non-harcoded columns, "upd
 
 ## TODO
 
-- Consolidate naming
-- Reduce dependencies between modules and with the main executable
+- Consolidate naming (node, database)
+- Reduce dependencies between modules and with the main executable (handle prints in input?)
 - Ensure logging and comments are consistent, exhaustive and useful

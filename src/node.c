@@ -42,7 +42,7 @@ void node_leaf_initialize(void *node) {
 
 void node_leaf_insert(Cursor *cursor, uint32_t key, Row *value) {
   log_debug("inserting row into node...");
-  void *node = pager_get_page(cursor->table->pager, cursor->page_num);
+  void *node = pager_get_page(cursor->database->pager, cursor->page_num);
 
   uint32_t num_cells = *node_leaf_num_cells(node);
   if (num_cells >= NODE_LEAF_MAX_CELLS) {
@@ -73,14 +73,14 @@ void node_leaf_insert(Cursor *cursor, uint32_t key, Row *value) {
 
 // Returns the position of the key, or the position of another key to move to
 // for inserting the new key, or the position one past the last key
-Cursor *node_leaf_find(Table *table, uint32_t page_num, uint32_t key) {
+Cursor *node_leaf_find(Database *database, uint32_t page_num, uint32_t key) {
   log_debug("finding key %d in node...", key);
-  void *node = pager_get_page(table->pager, page_num);
+  void *node = pager_get_page(database->pager, page_num);
   uint32_t num_cells = *node_leaf_num_cells(node);
 
   log_debug("allocating cursor...");
   Cursor *cursor = malloc(sizeof(Cursor));
-  cursor->table = table;
+  cursor->database = database;
   cursor->page_num = page_num;
 
   log_debug("binary searching for key %d...", key);
@@ -129,10 +129,10 @@ void node_leaf_split_and_insert(Cursor *cursor, uint32_t key, Row *value) {
   // Insert the new value in one of the two nodes.
   // Update parent or create a new parent.
   log_debug("splitting node and inserting row...");
-  void *old_node = pager_get_page(cursor->table->pager, cursor->page_num);
-  uint32_t old_max = node_get_max_key(cursor->table->pager, old_node);
-  uint32_t new_page_num = pager_get_unused_page_num(cursor->table->pager);
-  void *new_node = pager_get_page(cursor->table->pager, new_page_num);
+  void *old_node = pager_get_page(cursor->database->pager, cursor->page_num);
+  uint32_t old_max = node_get_max_key(cursor->database->pager, old_node);
+  uint32_t new_page_num = pager_get_unused_page_num(cursor->database->pager);
+  void *new_node = pager_get_page(cursor->database->pager, new_page_num);
 
   log_debug("initializing new node...");
   node_leaf_initialize(new_node);
@@ -171,32 +171,32 @@ void node_leaf_split_and_insert(Cursor *cursor, uint32_t key, Row *value) {
 
   log_debug("updating parent node...");
   if (node_is_root(old_node)) {
-    return node_create_new_root(cursor->table, new_page_num);
+    return node_create_new_root(cursor->database, new_page_num);
   }
 
   uint32_t parent_page_num = *node_parent(old_node);
-  uint32_t new_max = node_get_max_key(cursor->table->pager, old_node);
-  void *parent = pager_get_page(cursor->table->pager, parent_page_num);
+  uint32_t new_max = node_get_max_key(cursor->database->pager, old_node);
+  void *parent = pager_get_page(cursor->database->pager, parent_page_num);
 
   node_internal_update_key(parent, old_max, new_max);
-  node_internal_insert(cursor->table, parent_page_num, new_page_num);
+  node_internal_insert(cursor->database, parent_page_num, new_page_num);
 }
 
 uint32_t *node_leaf_next(void *node) {
   return node + NODE_LEAF_NEXT_LEAF_OFFSET;
 }
 
-void node_create_new_root(Table *table, uint32_t right_child_page_num) {
+void node_create_new_root(Database *database, uint32_t right_child_page_num) {
   // Handle splitting the root.
   // Old root copied to new page, becomes left child.
   // Address of right child passed in.
   // Re-initialize root page to contain the new root node.
   // New root node points to two children.
   log_debug("creating new root node...");
-  void *root = pager_get_page(table->pager, table->root_page_num);
-  void *right_child = pager_get_page(table->pager, right_child_page_num);
-  uint32_t left_child_page_num = pager_get_unused_page_num(table->pager);
-  void *left_child = pager_get_page(table->pager, left_child_page_num);
+  void *root = pager_get_page(database->pager, database->root_page_num);
+  void *right_child = pager_get_page(database->pager, right_child_page_num);
+  uint32_t left_child_page_num = pager_get_unused_page_num(database->pager);
+  void *left_child = pager_get_page(database->pager, left_child_page_num);
 
   if (node_get_type(root) == NODE_TYPE_INTERNAL) {
     node_internal_initialize(right_child);
@@ -210,11 +210,12 @@ void node_create_new_root(Table *table, uint32_t right_child_page_num) {
   if (node_get_type(left_child) == NODE_TYPE_INTERNAL) {
     void *child;
     for (uint32_t i = 0; i < *node_internal_num_keys(left_child); i++) {
-      child = pager_get_page(table->pager, *node_internal_child(left_child, i));
+      child =
+          pager_get_page(database->pager, *node_internal_child(left_child, i));
       *node_parent(child) = left_child_page_num;
     }
     child =
-        pager_get_page(table->pager, *node_internal_right_child(left_child));
+        pager_get_page(database->pager, *node_internal_right_child(left_child));
     *node_parent(child) = left_child_page_num;
   }
 
@@ -224,11 +225,11 @@ void node_create_new_root(Table *table, uint32_t right_child_page_num) {
   node_set_root(root, true);
   *node_internal_num_keys(root) = 1;
   *node_internal_child(root, 0) = left_child_page_num;
-  uint32_t left_child_max_key = node_get_max_key(table->pager, left_child);
+  uint32_t left_child_max_key = node_get_max_key(database->pager, left_child);
   *node_internal_key(root, 0) = left_child_max_key;
   *node_internal_right_child(root) = right_child_page_num;
-  *node_parent(left_child) = table->root_page_num;
-  *node_parent(right_child) = table->root_page_num;
+  *node_parent(left_child) = database->root_page_num;
+  *node_parent(right_child) = database->root_page_num;
 }
 
 uint32_t *node_internal_num_keys(void *node) {
@@ -309,18 +310,19 @@ void node_internal_initialize(void *node) {
   *node_internal_right_child(node) = NODE_INTERNAL_INVALID_PAGE_NUM;
 }
 
-Cursor *node_internal_find(Table *table, uint32_t page_num, uint32_t key) {
+Cursor *node_internal_find(Database *database, uint32_t page_num,
+                           uint32_t key) {
   log_debug("finding key %d in internal node...", key);
-  void *node = pager_get_page(table->pager, page_num);
+  void *node = pager_get_page(database->pager, page_num);
   uint32_t child_index = node_internal_find_child(node, key);
   uint32_t child_num = *node_internal_child(node, child_index);
-  void *child = pager_get_page(table->pager, child_num);
+  void *child = pager_get_page(database->pager, child_num);
 
   switch (node_get_type(child)) {
   case NODE_TYPE_LEAF:
-    return node_leaf_find(table, child_num, key);
+    return node_leaf_find(database, child_num, key);
   case NODE_TYPE_INTERNAL:
-    return node_internal_find(table, child_num, key);
+    return node_internal_find(database, child_num, key);
   }
 }
 
@@ -359,19 +361,19 @@ void node_internal_update_key(void *node, uint32_t old_key, uint32_t new_key) {
   *node_internal_key(node, old_child_index) = new_key;
 }
 
-void node_internal_insert(Table *table, uint32_t parent_page_num,
+void node_internal_insert(Database *database, uint32_t parent_page_num,
                           uint32_t child_page_num) {
   log_debug("inserting new child into internal node...");
-  void *parent = pager_get_page(table->pager, parent_page_num);
-  void *child = pager_get_page(table->pager, child_page_num);
-  uint32_t child_max_key = node_get_max_key(table->pager, child);
+  void *parent = pager_get_page(database->pager, parent_page_num);
+  void *child = pager_get_page(database->pager, child_page_num);
+  uint32_t child_max_key = node_get_max_key(database->pager, child);
   uint32_t index = node_internal_find_child(parent, child_max_key);
 
   uint32_t original_num_keys = *node_internal_num_keys(parent);
   *node_internal_num_keys(parent) = original_num_keys + 1;
 
   if (original_num_keys >= NODE_INTERNAL_MAX_CELLS) {
-    node_internal_split_and_insert(table, parent_page_num, child_page_num);
+    node_internal_split_and_insert(database, parent_page_num, child_page_num);
     return;
   }
 
@@ -383,16 +385,16 @@ void node_internal_insert(Table *table, uint32_t parent_page_num,
     return;
   }
 
-  void *right_child = pager_get_page(table->pager, right_child_page_num);
+  void *right_child = pager_get_page(database->pager, right_child_page_num);
 
   log_debug("incrementing num_keys...");
   *node_internal_num_keys(parent) = original_num_keys + 1;
 
-  if (child_max_key > node_get_max_key(table->pager, right_child)) {
+  if (child_max_key > node_get_max_key(database->pager, right_child)) {
     log_debug("replace right child...");
     *node_internal_child(parent, original_num_keys) = right_child_page_num;
     *node_internal_key(parent, original_num_keys) =
-        node_get_max_key(table->pager, right_child);
+        node_get_max_key(database->pager, right_child);
     *node_internal_right_child(parent) = child_page_num;
   } else {
     log_debug("making room for new cell...");
@@ -406,17 +408,18 @@ void node_internal_insert(Table *table, uint32_t parent_page_num,
   }
 }
 
-void node_internal_split_and_insert(Table *table, uint32_t parent_page_num,
+void node_internal_split_and_insert(Database *database,
+                                    uint32_t parent_page_num,
                                     uint32_t child_page_num) {
   log_debug("splitting internal node and inserting new child...");
   uint32_t old_page_num = parent_page_num;
-  void *old_node = pager_get_page(table->pager, parent_page_num);
-  uint32_t old_max = node_get_max_key(table->pager, old_node);
+  void *old_node = pager_get_page(database->pager, parent_page_num);
+  uint32_t old_max = node_get_max_key(database->pager, old_node);
 
-  void *child = pager_get_page(table->pager, child_page_num);
-  uint32_t child_max = node_get_max_key(table->pager, child);
+  void *child = pager_get_page(database->pager, child_page_num);
+  uint32_t child_max = node_get_max_key(database->pager, child);
 
-  uint32_t new_page_num = pager_get_unused_page_num(table->pager);
+  uint32_t new_page_num = pager_get_unused_page_num(database->pager);
 
   log_debug("checking if node is root...");
   uint32_t splitting_root = node_is_root(old_node);
@@ -425,26 +428,26 @@ void node_internal_split_and_insert(Table *table, uint32_t parent_page_num,
   void *new_node;
   if (splitting_root) {
     log_debug("splitting root node...");
-    node_create_new_root(table, new_page_num);
-    parent = pager_get_page(table->pager, table->root_page_num);
+    node_create_new_root(database, new_page_num);
+    parent = pager_get_page(database->pager, database->root_page_num);
 
     log_debug("updating old node to point to new root's left child...");
     old_page_num = *node_internal_child(parent, 0);
-    old_node = pager_get_page(table->pager, old_page_num);
+    old_node = pager_get_page(database->pager, old_page_num);
   } else {
     log_debug("splitting non-root node...");
-    parent = pager_get_page(table->pager, *node_parent(old_node));
-    new_node = pager_get_page(table->pager, new_page_num);
+    parent = pager_get_page(database->pager, *node_parent(old_node));
+    new_node = pager_get_page(database->pager, new_page_num);
     node_internal_initialize(new_node);
   }
 
   uint32_t *old_num_keys = node_internal_num_keys(old_node);
 
   uint32_t cur_page_num = *node_internal_right_child(old_node);
-  void *cur = pager_get_page(table->pager, cur_page_num);
+  void *cur = pager_get_page(database->pager, cur_page_num);
 
   log_debug("moving right child to new node...");
-  node_internal_insert(table, new_page_num, cur_page_num);
+  node_internal_insert(database, new_page_num, cur_page_num);
   *node_parent(cur) = new_page_num;
   *node_internal_right_child(old_node) = NODE_INTERNAL_INVALID_PAGE_NUM;
 
@@ -453,9 +456,9 @@ void node_internal_split_and_insert(Table *table, uint32_t parent_page_num,
        i > NODE_INTERNAL_MAX_CELLS / 2; i--) {
     log_debug("moving cell %d...", i);
     cur_page_num = *node_internal_child(old_node, i);
-    cur = pager_get_page(table->pager, cur_page_num);
+    cur = pager_get_page(database->pager, cur_page_num);
 
-    node_internal_insert(table, new_page_num, cur_page_num);
+    node_internal_insert(database, new_page_num, cur_page_num);
     *node_parent(cur) = new_page_num;
 
     (*old_num_keys)--;
@@ -468,22 +471,23 @@ void node_internal_split_and_insert(Table *table, uint32_t parent_page_num,
 
   log_debug(
       "determining which node should contain the child to be inserted...");
-  uint32_t max_after_split = node_get_max_key(table->pager, old_node);
+  uint32_t max_after_split = node_get_max_key(database->pager, old_node);
 
   uint32_t destination_page_num =
       child_max < max_after_split ? old_page_num : new_page_num;
 
   log_debug("inserting new child into destination node...");
-  node_internal_split_and_insert(table, destination_page_num, child_page_num);
+  node_internal_split_and_insert(database, destination_page_num,
+                                 child_page_num);
   *node_parent(child) = destination_page_num;
 
   log_debug("updating parent node...");
   node_internal_update_key(parent, old_max,
-                           node_get_max_key(table->pager, old_node));
+                           node_get_max_key(database->pager, old_node));
 
   if (!splitting_root) {
     log_debug("not a root node, updating parent...");
-    node_internal_insert(table, *node_parent(old_node), new_page_num);
+    node_internal_insert(database, *node_parent(old_node), new_page_num);
     *node_parent(new_node) = *node_parent(old_node);
   }
 }

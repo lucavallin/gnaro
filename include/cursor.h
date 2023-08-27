@@ -1,26 +1,26 @@
 #ifndef CURSOR_H
 #define CURSOR_H
 
-#include "table.h"
+#include "database.h"
 #include <stdbool.h>
 #include <stdint.h>
 
-// Cursor represents a position in a table
+// Cursor represents a position in a database
 typedef struct {
-  Table *table;
+  Database *database;
   uint32_t page_num;
   uint32_t cell_num;
-  // Indicates a position past the end of the table where a new row would be
+  // Indicates a position past the end of the database where a new row would be
   // inserted
   bool end_of_table;
 } Cursor;
 
-// Create a cursor at the beginning of the table
-Cursor *cursor_at_start(Table *table);
+// Create a cursor at the beginning of the database
+Cursor *cursor_start(Database *database);
 
 // Find the position of the given key or where it should be inserted if it is
 // not present
-Cursor *cursor_find_key(Table *table, uint32_t key);
+Cursor *cursor_find_key(Database *database, uint32_t key);
 
 // Move a cursor to the next row
 void cursor_advance(Cursor *cursor);

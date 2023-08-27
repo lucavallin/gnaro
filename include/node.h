@@ -2,9 +2,9 @@
 #define NODE_H
 
 #include "cursor.h"
+#include "database.h"
 #include "pager.h"
 #include "row.h"
-#include "table.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -97,7 +97,7 @@ void node_leaf_initialize(void *node);
 void node_leaf_insert(Cursor *cursor, uint32_t key, Row *value);
 
 // node_leaf_find returns a cursor to a leaf node containing the given key
-Cursor *node_leaf_find(Table *table, uint32_t page_num, uint32_t key);
+Cursor *node_leaf_find(Database *database, uint32_t page_num, uint32_t key);
 
 // node_get_type returns the type of a node
 NodeType node_get_type(void *node);
@@ -112,7 +112,7 @@ void node_leaf_split_and_insert(Cursor *cursor, uint32_t key, Row *value);
 uint32_t *node_leaf_next(void *node);
 
 // node_create_new_root creates a new root node
-void node_create_new_root(Table *table, uint32_t right_child_page_num);
+void node_create_new_root(Database *database, uint32_t right_child_page_num);
 
 // node_internal_num_keys returns the number of keys in an internal node
 uint32_t *node_internal_num_keys(void *node);
@@ -143,18 +143,19 @@ void node_internal_initialize(void *node);
 
 // node_internal_find returns a cursor to an internal node containing the given
 // key
-Cursor *node_internal_find(Table *table, uint32_t page_num, uint32_t key);
+Cursor *node_internal_find(Database *database, uint32_t page_num, uint32_t key);
 
 // node_internal_find_child returns the index of a child in an internal node
 uint32_t node_internal_find_child(void *node, uint32_t key);
 
 // node_internal_insert inserts a child into an internal node
-void node_internal_insert(Table *table, uint32_t parent_page_num,
+void node_internal_insert(Database *database, uint32_t parent_page_num,
                           uint32_t child_page_num);
 
 // node_internal_split_and_insert splits an internal node and inserts a new
 // child
-void node_internal_split_and_insert(Table *table, uint32_t parent_page_num,
+void node_internal_split_and_insert(Database *database,
+                                    uint32_t parent_page_num,
                                     uint32_t child_page_num);
 
 // node_parent returns a pointer to the parent of a node

@@ -1,9 +1,9 @@
 #include "argtable3.h"
+#include "database.h"
 #include "input.h"
 #include "log.h"
 #include "meta.h"
 #include "statement.h"
-#include "table.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -64,8 +64,8 @@ int main(int argc, char **argv) {
   log_debug("starting gnaro repl...");
 
   InputBuffer *input_buffer = input_new_buffer();
-  Table *table = table_db_open(dbf->sval[0]);
-  if (table == NULL) {
+  Database *database = database_open(dbf->sval[0]);
+  if (database == NULL) {
     log_error("failed to open database file %s", dbf->sval[0]);
     exitcode = 1;
     goto cleanup;
@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
 
     // Meta commands start with a '.'
     if (input_buffer->buffer[0] == '.') {
-      switch (meta_execute_command(input_buffer, table)) {
+      switch (meta_execute_command(input_buffer, database)) {
       case (META_COMMAND_SUCCESS):
         continue;
       case (META_COMMAND_EXIT):
@@ -118,12 +118,12 @@ int main(int argc, char **argv) {
 
     // Execute statement
     log_debug("executing statement...");
-    switch (statement_execute(&statement, table)) {
+    switch (statement_execute(&statement, database)) {
     case (STATEMENT_EXECUTE_SUCCESS):
       log_info("statement executed");
       break;
     case (STATEMENT_EXECUTE_TABLE_FULL):
-      log_error("statement failed: table full.");
+      log_error("statement failed: database full.");
       break;
     case (STATEMENT_EXECUTE_DUPLICATE_KEY):
       log_error("statement failed: duplicate key.");
@@ -139,9 +139,9 @@ cleanup:
   log_info("freeing resources...");
   log_info("freeing input buffer...");
   input_close_buffer(input_buffer);
-  log_info("freeing table...");
-  if (table_db_close(table) == TABLE_CLOSE_FAIL) {
-    log_error("failed to close table");
+  log_info("freeing database...");
+  if (database_close(database) == DATABASE_CLOSE_FAIL) {
+    log_error("failed to close database");
   }
   log_debug("freeing argtable...");
   log_info("so long and thanks for all the wasps!");

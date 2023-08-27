@@ -1,11 +1,11 @@
 #include "statement.h"
 #include "cursor.h"
+#include "database.h"
 #include "input.h"
 #include "log.h"
 #include "node.h"
 #include "pager.h"
 #include "row.h"
-#include "table.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -71,15 +71,16 @@ StatementPrepareResult statement_prepare_insert(InputBuffer *input_buffer,
 
 // Execute the statement
 // statement_execute roughly corresponds to the Virtual Machine in SQLite
-StatementExecuteResult statement_execute(Statement *statement, Table *table) {
+StatementExecuteResult statement_execute(Statement *statement,
+                                         Database *database) {
   switch (statement->type) {
   case (STATEMENT_INSERT):
     log_debug("requested insert statement...");
-    return statement_execute_insert(statement, table);
+    return statement_execute_insert(statement, database);
     break;
   case (STATEMENT_SELECT):
     log_debug("requested select statement...");
-    return statement_execute_select(table);
+    return statement_execute_select(database);
     break;
   default:
     log_error("unknown statement type");
@@ -88,15 +89,15 @@ StatementExecuteResult statement_execute(Statement *statement, Table *table) {
 }
 
 StatementExecuteResult statement_execute_insert(Statement *statement,
-                                                Table *table) {
+                                                Database *database) {
   log_debug("executing insert statement...");
-  void *node = pager_get_page(table->pager, table->root_page_num);
+  void *node = pager_get_page(database->pager, database->root_page_num);
   uint32_t num_cells = (*node_leaf_num_cells(node));
 
   log_debug("serializing row for insert...");
   Row *row_to_insert = &(statement->row_to_insert);
   uint32_t key_to_insert = row_to_insert->id;
-  Cursor *cursor = cursor_find_key(table, key_to_insert);
+  Cursor *cursor = cursor_find_key(database, key_to_insert);
 
   if (cursor->cell_num < num_cells) {
     uint32_t key_at_index = *node_leaf_key(node, cursor->cell_num);
@@ -113,10 +114,10 @@ StatementExecuteResult statement_execute_insert(Statement *statement,
   return STATEMENT_EXECUTE_SUCCESS;
 }
 
-StatementExecuteResult statement_execute_select(Table *table) {
+StatementExecuteResult statement_execute_select(Database *database) {
   log_debug("executing select statement...");
-  log_debug("getting cursor at end of table...");
-  Cursor *cursor = cursor_at_start(table);
+  log_debug("getting cursor at end of database...");
+  Cursor *cursor = cursor_start(database);
 
   Row row;
   while (!(cursor->end_of_table)) {
