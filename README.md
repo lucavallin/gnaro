@@ -20,13 +20,16 @@ $ ./bin/gnaro -d gnaro.db [-v]
 
 gnaro> insert 1 example example@example.com
 16:39:33 INFO  ./src/gnaro.c:123: statement executed
+
 gnaro> select
 (1, example, example@example.com)
 16:39:36 INFO  ./src/gnaro.c:123: statement executed
+
 gnaro> .btree
 Tree:
 - leaf (size 1)
   - 1
+
 gnaro> .exit
 16:39:43 INFO  ./src/gnaro.c:139: freeing resources...
 16:39:43 INFO  ./src/gnaro.c:140: freeing input buffer...
