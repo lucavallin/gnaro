@@ -16,11 +16,22 @@ Tokenizer, Parser and Code Generator are part of the front-end, which takes in a
 `gnaro` is currently empty. It can be run to display a simple welcome message (with the optional `-v` for verbose output):
 
 ```bash
-$ sudo ./bin/gnaro [-v]
+$ ./bin/gnaro -d gnaro.db [-v]
 
-22:08:41 INFO  ./src/gnaro.c:57: Welcome to Gnaro!
-22:08:55 INFO  ./src/gnaro.c:61: freeing resources...
-22:08:55 INFO  ./src/gnaro.c:66: so long and thanks for all the wasps
+gnaro> insert 1 example example@example.com
+16:39:33 INFO  ./src/gnaro.c:123: statement executed
+gnaro> select
+(1, example, example@example.com)
+16:39:36 INFO  ./src/gnaro.c:123: statement executed
+gnaro> .btree
+Tree:
+- leaf (size 1)
+  - 1
+gnaro> .exit
+16:39:43 INFO  ./src/gnaro.c:139: freeing resources...
+16:39:43 INFO  ./src/gnaro.c:140: freeing input buffer...
+16:39:43 INFO  ./src/gnaro.c:142: freeing table...
+16:39:43 INFO  ./src/gnaro.c:147: so long and thanks for all the wasps!
 ```
 
 ## Setup
@@ -108,6 +119,7 @@ The project is structured as follows:
 ├── .clang-tidy             configuration for the linter
 ├── .gitignore
 ├── compile_commands.json   compilation database for clang tools
+├── gnaro.db                Database file for gnaro
 ├── LICENSE
 ├── Makefile
 └── README.md
@@ -115,7 +127,7 @@ The project is structured as follows:
 
 ## Testing and documentation
 
-At the moment, the project does not contain any automated tests but `Cunit` is set up and a basic test can be found at [gnaro_test.c](tests/gnaro_test.c). Documentation is generated using [clang-doc](https://clang.llvm.org/extra/clang-doc.html) and can be found at [docs/](docs/).
+At the moment, the project does not contain any automated tests but `Cunit` is set up and a basic test can be found at [gnaro_test.c](tests/gnaro_test.c). Documentation is currently limited to this README and the comments and logging in the code.
 
 ## Limitations
 
@@ -133,7 +145,7 @@ It would be nice to at least support multiple tables, non-harcoded columns, "upd
 
 ## Credits
 
-`gnaro` is, for the most part, based on [db_tutorial](https://cstack.github.io/db_tutorial/) by [@cstack](https://github.com/cstack).
+`gnaro` is based almost entirely on [db_tutorial](https://cstack.github.io/db_tutorial/) by [@cstack](https://github.com/cstack).
 
 ## FAQ
 
@@ -143,6 +155,6 @@ It would be nice to at least support multiple tables, non-harcoded columns, "upd
 
 ## TODO
 
-- Reduce dependencies between modules and with the main executable
 - Consolidate naming
+- Reduce dependencies between modules and with the main executable
 - Ensure logging and comments are consistent, exhaustive and useful
