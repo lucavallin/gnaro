@@ -7,16 +7,14 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+// Get cell 0 of the leftmost leaf node
 Cursor *cursor_at_start(Table *table) {
   log_debug("allocating cursor at start of table...");
-  Cursor *cursor = malloc(sizeof(Cursor));
-  cursor->table = table;
-  cursor->page_num = table->root_page_num;
-  cursor->cell_num = 0;
+  Cursor *cursor = cursor_find_key(table, 0);
 
   log_debug("getting root node...");
-  void *root_node = pager_get_page(table->pager, table->root_page_num);
-  uint32_t num_cells = *node_leaf_num_cells(root_node);
+  void *node = pager_get_page(table->pager, cursor->page_num);
+  uint32_t num_cells = *node_leaf_num_cells(node);
   cursor->end_of_table = (num_cells == 0);
 
   return cursor;
@@ -44,8 +42,16 @@ void cursor_advance(Cursor *cursor) {
 
   cursor->cell_num += 1;
   if (cursor->cell_num >= (*node_leaf_num_cells(node))) {
-    log_debug("cursor is at end of table...");
-    cursor->end_of_table = true;
+    log_debug("advancing to next page...");
+    uint32_t next_page_num = *node_leaf_next(node);
+    if (next_page_num == 0) {
+      log_debug("cursor is at end of table...");
+      cursor->end_of_table = true;
+    } else {
+      log_debug("cursor is not at end of table...");
+      cursor->page_num = next_page_num;
+      cursor->cell_num = 0;
+    }
   }
 }
 

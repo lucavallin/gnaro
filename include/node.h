@@ -31,8 +31,12 @@ static const uint8_t NODE_COMMON_HEADER_SIZE =
 // a leaf node consists of a number of cells.
 static const uint32_t NODE_LEAF_NUM_CELLS_SIZE = sizeof(uint32_t);
 static const uint32_t NODE_LEAF_NUM_CELLS_OFFSET = NODE_COMMON_HEADER_SIZE;
-static const uint32_t NODE_LEAF_HEADER_SIZE =
-    NODE_COMMON_HEADER_SIZE + NODE_LEAF_NUM_CELLS_SIZE;
+static const uint32_t NODE_LEAF_NEXT_LEAF_SIZE = sizeof(uint32_t);
+static const uint32_t NODE_LEAF_NEXT_LEAF_OFFSET =
+    NODE_LEAF_NUM_CELLS_OFFSET + NODE_LEAF_NUM_CELLS_SIZE;
+static const uint32_t NODE_LEAF_HEADER_SIZE = NODE_COMMON_HEADER_SIZE +
+                                              NODE_LEAF_NUM_CELLS_SIZE +
+                                              NODE_LEAF_NEXT_LEAF_SIZE;
 
 // Internal Node Header Layout
 static const uint32_t NODE_INTERNAL_NUM_KEYS_SIZE = sizeof(uint32_t);
@@ -63,6 +67,7 @@ static const uint32_t NODE_INTERNAL_KEY_SIZE = sizeof(uint32_t);
 static const uint32_t NODE_INTERNAL_CHILD_SIZE = sizeof(uint32_t);
 static const uint32_t NODE_INTERNAL_CELL_SIZE =
     NODE_INTERNAL_CHILD_SIZE + NODE_INTERNAL_KEY_SIZE;
+static const uint32_t NODE_INTERNAL_MAX_CELLS = 3;
 
 // Leaf Node Split Configuration
 static const uint32_t NODE_LEAF_RIGHT_SPLIT_COUNT =
@@ -100,6 +105,9 @@ void node_set_type(void *node, NodeType type);
 // node_leaf_split_and_insert splits a leaf node and inserts a new row
 void node_leaf_split_and_insert(Cursor *cursor, uint32_t key, Row *value);
 
+// node_leaf_next returns the page number of the next leaf node
+uint32_t *node_leaf_next(void *node);
+
 // node_create_new_root creates a new root node
 void node_create_new_root(Table *table, uint32_t right_child_page_num);
 
@@ -133,6 +141,19 @@ void node_internal_initialize(void *node);
 // node_internal_find returns a cursor to an internal node containing the given
 // key
 Cursor *node_internal_find(Table *table, uint32_t page_num, uint32_t key);
+
+// node_internal_find_child returns the index of a child in an internal node
+uint32_t node_internal_find_child(void *node, uint32_t key);
+
+// node_internal_insert inserts a child into an internal node
+void node_internal_insert(Table *table, uint32_t parent_page_num,
+                          uint32_t child_page_num);
+
+// node_parent returns a pointer to the parent of a node
+uint32_t *node_parent(void *node);
+
+// node_internal_update_key updates the key of a child in an internal node
+void node_internal_update_key(void *node, uint32_t old_key, uint32_t new_key);
 
 // node_print_tree prints the btree to stdout
 void node_print_tree(Pager *pager, uint32_t page_num,

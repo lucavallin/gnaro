@@ -1,5 +1,5 @@
 # <img src="./docs/gnaro.png" style="width:40px;padding-right:10px;margin-bottom:-8px;"> gnaro
-A half-baked "database" inspired by SQLite written in C for educational purposes. `gnaro` takes SQLite as a reference because of the limited feature set, and therefore complexity, when compared to other databases. SQLite consists roughly of the following components:
+A proto-database inspired by SQLite, written in C for educational purposes. `gnaro` takes SQLite as a reference because of the limited feature set, and therefore complexity, when compared to other databases. SQLite consists roughly of the following components:
 
 - Tokenizer
 - Parser
@@ -147,3 +147,4 @@ It would be nice to at least support multiple tables, non-harcoded columns, "upd
 - Address linting errors (can any be re-enabled?)
 - Reduce dependencies between modules and with the main executable
 - Handle exits in the main executable
+- Replace custom btree with some library
