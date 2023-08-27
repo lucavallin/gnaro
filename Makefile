@@ -106,7 +106,7 @@ setup:
 	@rm llvm.sh
 
 	# Install Clang development tools
-	@sudo apt install -y clang-tools-18 clang-18-doc valgrind bear
+	@sudo apt install -y clang-tools-18 clang-format-18 clang-tidy-18 valgrind bear
 
 	# Install CUnit testing framework
 	@sudo apt install -y libcunit1 libcunit1-doc libcunit1-dev
