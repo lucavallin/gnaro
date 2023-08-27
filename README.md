@@ -144,7 +144,5 @@ It would be nice to at least support multiple tables, non-harcoded columns, "upd
 ## TODO
 
 - Ensure logging and comments are consistent, exhaustive and useful
-- Address linting errors (can any be re-enabled?)
 - Reduce dependencies between modules and with the main executable
 - Handle exits in the main executable
-- Replace custom btree with some library

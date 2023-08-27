@@ -54,7 +54,6 @@ StatementExecuteResult statement_execute_insert(Statement *statement,
                                                 Table *table);
 
 // statement_execute_select executes a select statement.
-StatementExecuteResult statement_execute_select(Statement *statement,
-                                                Table *table);
+StatementExecuteResult statement_execute_select(Table *table);
 
 #endif

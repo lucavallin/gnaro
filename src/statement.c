@@ -79,7 +79,7 @@ StatementExecuteResult statement_execute(Statement *statement, Table *table) {
     break;
   case (STATEMENT_SELECT):
     log_debug("requested select statement...");
-    return statement_execute_select(statement, table);
+    return statement_execute_select(table);
     break;
   default:
     log_error("unknown statement type");
@@ -113,8 +113,7 @@ StatementExecuteResult statement_execute_insert(Statement *statement,
   return STATEMENT_EXECUTE_SUCCESS;
 }
 
-StatementExecuteResult statement_execute_select(Statement *statement,
-                                                Table *table) {
+StatementExecuteResult statement_execute_select(Table *table) {
   log_debug("executing select statement...");
   log_debug("getting cursor at end of table...");
   Cursor *cursor = cursor_at_start(table);

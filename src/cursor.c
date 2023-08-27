@@ -29,10 +29,10 @@ Cursor *cursor_find_key(Table *table, uint32_t key) {
   if (node_get_type(root_node) == NODE_TYPE_LEAF) {
     log_debug("searching leaf node...");
     return node_leaf_find(table, root_page_num, key);
-  } else {
-    log_debug("searching internal node...");
-    return node_internal_find(table, root_page_num, key);
   }
+
+  log_debug("searching internal node...");
+  return node_internal_find(table, root_page_num, key);
 }
 
 void cursor_advance(Cursor *cursor) {

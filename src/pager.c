@@ -1,6 +1,7 @@
 #include "pager.h"
 #include "log.h"
 #include <fcntl.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>

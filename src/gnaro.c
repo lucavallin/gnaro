@@ -136,8 +136,6 @@ cleanup:
   input_close_buffer(input_buffer);
   log_info("freeing table...");
   table_db_close(table);
-
-exit:
   log_debug("freeing argtable...");
   log_info("so long and thanks for all the wasps!");
 

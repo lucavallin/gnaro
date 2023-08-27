@@ -9,30 +9,21 @@ FormatStyle: file
 Checks: "-*,\
   bugprone-*,\
   -bugprone-easily-swappable-parameters, \
-  -bugprone-assignment-in-if-condition, \
-  -bugprone-reserved-identifier, \
+  -bugprone-implicit-widening-of-multiplication-result, \
   cert-*,\
-  -cert-msc30-c, \
-  -cert-msc32-c, \
-  -cert-msc50-cpp, \
-  -cert-msc51-cpp, \
-  -cert-dcl37-c, \
-  -cert-dcl51-cpp, \
   -cert-err34-c, \
   clang-analyzer-*,\
   -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,\
   -clang-analyzer-security.insecureAPI.strcpy, \
   concurrency-*,\
-  -concurrency-mt-unsafe, \
   linuxkernel-*,\
   llvm-*,\
-  -llvm-header-guard, \
   misc-*,\
+  -misc-no-recursion, \
   modernize-*,\
   -modernize-use-trailing-return-type, \
   -modernize-use-using, \
   performance-*,\
-  -performance-enum-size, \
   portability-*,\
   readability-*, \
   -readability-identifier-length"

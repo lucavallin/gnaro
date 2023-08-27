@@ -75,6 +75,9 @@ static const uint32_t NODE_LEAF_RIGHT_SPLIT_COUNT =
 static const uint32_t NODE_LEAF_LEFT_SPLIT_COUNT =
     (NODE_LEAF_MAX_CELLS + 1) - NODE_LEAF_RIGHT_SPLIT_COUNT;
 
+// Internal Node Split Configuration
+static const uint32_t NODE_INTERNAL_INVALID_PAGE_NUM = UINT32_MAX;
+
 // node_leaf_num_cells returns the number of cells in a leaf node
 uint32_t *node_leaf_num_cells(void *node);
 
@@ -127,7 +130,7 @@ uint32_t *node_internal_child(void *node, uint32_t child_num);
 uint32_t *node_internal_key(void *node, uint32_t key_num);
 
 // node_get_max_key returns the maximum key in a node
-uint32_t node_get_max_key(void *node);
+uint32_t node_get_max_key(Pager *pager, void *node);
 
 // node_is_root returns whether or not a node is the root node
 bool node_is_root(void *node);
@@ -148,6 +151,11 @@ uint32_t node_internal_find_child(void *node, uint32_t key);
 // node_internal_insert inserts a child into an internal node
 void node_internal_insert(Table *table, uint32_t parent_page_num,
                           uint32_t child_page_num);
+
+// node_internal_split_and_insert splits an internal node and inserts a new
+// child
+void node_internal_split_and_insert(Table *table, uint32_t parent_page_num,
+                                    uint32_t child_page_num);
 
 // node_parent returns a pointer to the parent of a node
 uint32_t *node_parent(void *node);
