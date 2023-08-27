@@ -4,6 +4,12 @@
 #include "pager.h"
 #include <stdint.h>
 
+// TableResult is an enum that represents the result of a table operation.
+typedef enum {
+  TABLE_CLOSE_SUCCESS,
+  TABLE_CLOSE_FAIL,
+} TableResult;
+
 // Table is a struct that represents a table. It uses a pager to persist data.
 // It roughly corresponds to a B-Tree in SQLite.
 //
@@ -22,6 +28,6 @@ typedef struct {
 Table *table_db_open(const char *filename);
 
 // Closes a connection to a database.
-void table_db_close(Table *table);
+TableResult table_db_close(Table *table);
 
 #endif

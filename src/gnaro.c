@@ -63,8 +63,13 @@ int main(int argc, char **argv) {
 
   log_debug("starting gnaro repl...");
 
-  Table *table = table_db_open(dbf->sval[0]);
   InputBuffer *input_buffer = input_new_buffer();
+  Table *table = table_db_open(dbf->sval[0]);
+  if (table == NULL) {
+    log_error("failed to open database file %s", dbf->sval[0]);
+    exitcode = 1;
+    goto cleanup;
+  }
 
   // Start REPL loop
   while (true) {
@@ -135,7 +140,9 @@ cleanup:
   log_info("freeing input buffer...");
   input_close_buffer(input_buffer);
   log_info("freeing table...");
-  table_db_close(table);
+  if (table_db_close(table) == TABLE_CLOSE_FAIL) {
+    log_error("failed to close table");
+  }
   log_debug("freeing argtable...");
   log_info("so long and thanks for all the wasps!");
 

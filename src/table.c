@@ -11,6 +11,10 @@
 // initializing a pager and a table data structure
 Table *table_db_open(const char *filename) {
   Pager *pager = pager_open(filename);
+  if (pager == NULL) {
+    log_error("failed to open database file %s", filename);
+    return NULL;
+  }
 
   log_debug("allocating table...");
   Table *table = malloc(sizeof(Table));
@@ -29,7 +33,7 @@ Table *table_db_open(const char *filename) {
 
 // table_db_close flushes the page cache to disk, closes the database file and
 // then frees the memory for the Pager and Table data structures
-void table_db_close(Table *table) {
+TableResult table_db_close(Table *table) {
   log_debug("closing database...");
 
   Pager *pager = table->pager;
@@ -55,7 +59,7 @@ void table_db_close(Table *table) {
   int result = close(pager->file_descriptor);
   if (result == -1) {
     log_error("failed to close db file: %m");
-    exit(EXIT_FAILURE);
+    return TABLE_CLOSE_FAIL;
   }
 
   log_debug("freeing pages...");
@@ -75,4 +79,6 @@ void table_db_close(Table *table) {
 
   log_debug("freeing table...");
   free(table);
+
+  return TABLE_CLOSE_SUCCESS;
 }

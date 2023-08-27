@@ -16,7 +16,7 @@ Pager *pager_open(const char *filename) {
 
   if (fd == -1) {
     log_error("failed to open file %s", filename);
-    exit(EXIT_FAILURE);
+    return NULL;
   }
 
   log_debug("allocating pager...");
@@ -30,7 +30,7 @@ Pager *pager_open(const char *filename) {
   if (file_length % PAGER_PAGE_SIZE != 0) {
     log_error(
         "database does not container a whole number of pages: corrupt file");
-    exit(EXIT_FAILURE);
+    return NULL;
   }
 
   // Initialize pages to NULL

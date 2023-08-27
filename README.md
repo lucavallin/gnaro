@@ -143,6 +143,6 @@ It would be nice to at least support multiple tables, non-harcoded columns, "upd
 
 ## TODO
 
-- Ensure logging and comments are consistent, exhaustive and useful
 - Reduce dependencies between modules and with the main executable
-- Handle exits in the main executable
+- Consolidate naming
+- Ensure logging and comments are consistent, exhaustive and useful

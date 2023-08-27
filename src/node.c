@@ -145,7 +145,7 @@ void node_leaf_split_and_insert(Cursor *cursor, uint32_t key, Row *value) {
     log_debug("moving cell %d...", i);
 
     void *destination_node;
-    if (i >= NODE_LEAF_LEFT_SPLIT_COUNT) {
+    if (i >= (int32_t)NODE_LEAF_LEFT_SPLIT_COUNT) {
       destination_node = new_node;
     } else {
       destination_node = old_node;
@@ -153,12 +153,12 @@ void node_leaf_split_and_insert(Cursor *cursor, uint32_t key, Row *value) {
     uint32_t index_within_node = i % NODE_LEAF_LEFT_SPLIT_COUNT;
     void *destination = node_leaf_cell(destination_node, index_within_node);
 
-    if (i == cursor->cell_num) {
+    if (i == (int32_t)cursor->cell_num) {
       log_debug("inserting row into new node...");
       row_serialize(value,
                     node_leaf_value(destination_node, index_within_node));
       *node_leaf_key(destination_node, index_within_node) = key;
-    } else if (i > cursor->cell_num) {
+    } else if (i > (int32_t)cursor->cell_num) {
       memcpy(destination, node_leaf_cell(old_node, i - 1), NODE_LEAF_CELL_SIZE);
     } else {
       memcpy(destination, node_leaf_cell(old_node, i), NODE_LEAF_CELL_SIZE);
@@ -209,7 +209,7 @@ void node_create_new_root(Table *table, uint32_t right_child_page_num) {
 
   if (node_get_type(left_child) == NODE_TYPE_INTERNAL) {
     void *child;
-    for (int i = 0; i < *node_internal_num_keys(left_child); i++) {
+    for (uint32_t i = 0; i < *node_internal_num_keys(left_child); i++) {
       child = pager_get_page(table->pager, *node_internal_child(left_child, i));
       *node_parent(child) = left_child_page_num;
     }
