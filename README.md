@@ -13,7 +13,7 @@ Tokenizer, Parser and Code Generator are part of the front-end, which takes in a
 
 ## Usage
 
-`gnaro` is currently empty. It can be run to display a simple welcome message (with the optional `-v` for verbose output):
+`gnaro` can be run using `gnaro.db` as database file as follows (with the optional `-v` for verbose output):
 
 ```bash
 $ ./bin/gnaro -d gnaro.db [-v]
