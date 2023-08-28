@@ -28,11 +28,11 @@ Cursor *cursor_find_key(Database *database, uint32_t key) {
 
   if (btree_node_get_type(root_node) == BTREE_NODE_TYPE_LEAF) {
     log_debug("searching leaf node...");
-    return btree_node_leaf_find(database, root_page_num, key);
+    return btree_node_leaf_find(database, key, root_page_num);
   }
 
   log_debug("searching internal node...");
-  return btree_node_internal_find(database, root_page_num, key);
+  return btree_node_internal_find(database, key, root_page_num);
 }
 
 void cursor_advance(Cursor *cursor) {

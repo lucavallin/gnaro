@@ -74,7 +74,6 @@ $ make debug=1
 
 ## Development
 `gnaro` is developed using [Visual Studio Code](https://code.visualstudio.com/) and [GitHub Codespaces](https://github.com/codespaces). The repository contains all the necessary configuration files to use these tools effectively.
-`gnaro` relies on low-level Linux features, so it must be run on a Linux system. [GitHub Codespaces](https://github.com/codespaces) acts weird at times when tweaking low-level container settings: I found [getutm.app](https://getutm.app) to work well with [Debian](http://debian.org) on my Mac when in doubt.
 
 The included `Makefile` provides a few targets useful for development:
 
@@ -140,9 +139,14 @@ At the moment, the project does not contain any automated tests but `Cunit` is s
  1. Rows with hardcoded columns
  1. "insert" and "select" statements
 
-It would be nice to at least support multiple tables, non-harcoded columns, "update" and "delete" statements. Unfortunately the goal of this project is only to learn more about databases and I am reasonably satisfied with the current state.
+It would be nice to at least support multiple tables, non-harcoded columns, "update" and "delete" statements.
+Improvements to code quality instead could be:
 
-TODO: Furthermore, exits here and there, dependency between "modules".
+- Call `exit()` only in the `main` function
+- Reduce dependencies between files.
+- Address linting issues.
+
+Unfortunately the goal of this project is only to learn more about databases and I am reasonably satisfied with the current state.
 
 ## Improvements
 
@@ -157,9 +161,3 @@ TODO: Furthermore, exits here and there, dependency between "modules".
 - **Why C?** I haven't written much C since college and nostalgia got me.
 - **What does "gnaro" mean?** It's [Venetian](https://vec.wikipedia.org/wiki/Gnaro) for "nest".
 - **Nice logo, did you design it yourself?** Kind of, I asked Midjourney to come up with some designs.
-
-## TODO
-
-- Reorder btree.h/c, comments in all H
-- Name and order parameters in functions
-- Ensure logging and comments are consistent, exhaustive and useful

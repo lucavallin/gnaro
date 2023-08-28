@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
-// Create a new input buffer
 InputBuffer *input_new_buffer(void) {
   log_debug("creating new input buffer...");
   InputBuffer *input_buffer = (InputBuffer *)malloc(sizeof(InputBuffer));
@@ -15,10 +14,8 @@ InputBuffer *input_new_buffer(void) {
   return input_buffer;
 }
 
-// Print a prompt to the user
 void input_prompt(char *text) { printf("%s > ", text); }
 
-// Read input from stdin
 int input_read(InputBuffer *input_buffer) {
   log_debug("reading input...");
   ssize_t bytes_read =
@@ -35,7 +32,6 @@ int input_read(InputBuffer *input_buffer) {
   return 0;
 }
 
-// Close an input buffer
 void input_close_buffer(InputBuffer *input_buffer) {
   log_debug("closing input buffer...");
   free(input_buffer->buffer);

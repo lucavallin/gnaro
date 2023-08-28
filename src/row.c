@@ -3,11 +3,10 @@
 #include <stdio.h>
 #include <string.h>
 
+// strncpy initializes all bytes even if the string is shorter than the size
 void row_serialize(Row *source, void *destination) {
   log_debug("serializing row...");
   memcpy(destination + ROW_ID_OFFSET, &(source->id), ROW_ID_SIZE);
-  // strncpy ensures that all bytes are initialized, even if the string is not
-  // as long as the field
   strncpy(destination + ROW_USERNAME_OFFSET, source->username,
           ROW_USERNAME_SIZE);
   strncpy(destination + ROW_EMAIL_OFFSET, source->email, ROW_EMAIL_SIZE);

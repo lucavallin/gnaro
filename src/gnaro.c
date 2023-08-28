@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
 
     // Meta commands start with a '.'
     if (input_buffer->buffer[0] == '.') {
-      switch (meta_execute_command(input_buffer, database)) {
+      switch (meta_execute_command(input_buffer->buffer, database)) {
       case (META_COMMAND_SUCCESS):
         continue;
       case (META_COMMAND_EXIT):
@@ -96,7 +96,7 @@ int main(int argc, char **argv) {
     // Prepare statement for SQL operations
     log_debug("preparing statement...");
     Statement statement;
-    switch (statement_prepare(input_buffer, &statement)) {
+    switch (statement_prepare(input_buffer->buffer, &statement)) {
     case (STATEMENT_PREPARE_SUCCESS):
       log_debug("statement prepared...");
       break;

@@ -81,57 +81,14 @@ static const uint32_t BTREE_NODE_LEAF_LEFT_SPLIT_COUNT =
 // Internal Node Split Configuration
 static const uint32_t BTREE_NODE_INTERNAL_INVALID_PAGE_NUM = UINT32_MAX;
 
-// Get the number of cells in a leaf node
-uint32_t *btree_node_leaf_num_cells(void *node);
-
-// Get a pointer to a cell in a leaf node
-void *btree_node_leaf_cell(void *node, uint32_t cell_num);
-
-// Get a pointer to the key of a cell in a leaf node
-uint32_t *btree_node_leaf_key(void *node, uint32_t cell_num);
-
-// Get a pointer to the value of a cell in a leaf node
-void *btree_node_leaf_value(void *node, uint32_t cell_num);
-
-// Initialize a leaf node
-void btree_node_leaf_init(void *node);
-
-// Insert a row into a leaf node
-void btree_node_leaf_insert(Cursor *cursor, uint32_t key, Row *value);
-
-// Get a cursor to a leaf node containing the given key
-Cursor *btree_node_leaf_find(Database *database, uint32_t page_num,
-                             uint32_t key);
-
 // Get the type of a node
 NodeType btree_node_get_type(void *node);
 
 // Set the type of a node
 void btree_node_set_type(void *node, NodeType type);
 
-// Split a leaf node and inserts a new row
-void btree_node_leaf_split_and_insert(Cursor *cursor, uint32_t key, Row *value);
-
-// Get the page number of the next leaf node
-uint32_t *btree_node_leaf_next(void *node);
-
 // Create a new root node
 void btree_node_new_root(Database *database, uint32_t right_child_page_num);
-
-// Get the number of keys in an internal node
-uint32_t *btree_node_internal_num_keys(void *node);
-
-// Get a pointer to the right child of an
-uint32_t *btree_node_internal_right_child(void *node);
-
-// Get a pointer to a cell in an internal node
-uint32_t *btree_node_internal_cell(void *node, uint32_t cell_num);
-
-// Get a pointer to a child in an internal node
-uint32_t *btree_node_internal_child(void *node, uint32_t child_num);
-
-// Get a pointer to the key of a cell in an
-uint32_t *btree_node_internal_key(void *node, uint32_t key_num);
 
 // Get the maximum key in a node
 uint32_t btree_node_get_max_key(Pager *pager, void *node);
@@ -142,12 +99,61 @@ bool btree_node_is_root(void *node);
 // Set whether or not a node is the root node
 void btree_node_set_root(void *node, bool is_root);
 
+// Get a pointer to the parent of a node
+uint32_t *btree_node_parent(void *node);
+
+// Printthe btree to stdout
+void btree_print(Pager *pager, uint32_t page_num, uint32_t indent_level);
+
+// Initialize a leaf node
+void btree_node_leaf_init(void *node);
+
+// Get a pointer to the key of a cell in a leaf node
+uint32_t *btree_node_leaf_key(void *node, uint32_t cell_num);
+
+// Get a pointer to a cell in a leaf node
+void *btree_node_leaf_cell(void *node, uint32_t cell_num);
+
+// Get the number of cells in a leaf node
+uint32_t *btree_node_leaf_num_cells(void *node);
+
+// Get a pointer to the value of a cell in a leaf node
+void *btree_node_leaf_value(void *node, uint32_t cell_num);
+
+// Get the page number of the next leaf node
+uint32_t *btree_node_leaf_next(void *node);
+
+// Get a cursor to a leaf node containing the given key
+Cursor *btree_node_leaf_find(Database *database, uint32_t key,
+                             uint32_t page_num);
+
+// Insert a row into a leaf node
+void btree_node_leaf_insert(Cursor *cursor, uint32_t key, Row *value);
+
+// Split a leaf node and inserts a new row
+void btree_node_leaf_split_and_insert(Cursor *cursor, uint32_t key, Row *value);
+
 // Initialize an internal node
 void btree_node_internal_init(void *node);
 
+// Get a pointer to the key of a cell in an
+uint32_t *btree_node_internal_key(void *node, uint32_t key_num);
+
+// Get a pointer to a cell in an internal node
+uint32_t *btree_node_internal_cell(void *node, uint32_t cell_num);
+
+// Get the number of keys in an internal node
+uint32_t *btree_node_internal_num_keys(void *node);
+
+// Get a pointer to a child in an internal node
+uint32_t *btree_node_internal_child(void *node, uint32_t child_num);
+
+// Get a pointer to the right child of an
+uint32_t *btree_node_internal_right_child(void *node);
+
 // Get a cursor to an internal node containing the given key
-Cursor *btree_node_internal_find(Database *database, uint32_t page_num,
-                                 uint32_t key);
+Cursor *btree_node_internal_find(Database *database, uint32_t key,
+                                 uint32_t page_num);
 
 // Get the index of a child in an internal node
 uint32_t btree_node_internal_find_child(void *node, uint32_t key);
@@ -161,14 +167,8 @@ void btree_node_internal_split_and_insert(Database *database,
                                           uint32_t parent_page_num,
                                           uint32_t child_page_num);
 
-// Get a pointer to the parent of a node
-uint32_t *btree_node_parent(void *node);
-
 // Get the key of a child in an internal node
 void btree_node_internal_update_key(void *node, uint32_t old_key,
                                     uint32_t new_key);
-
-// Printthe btree to stdout
-void btree_print(Pager *pager, uint32_t page_num, uint32_t indent_level);
 
 #endif

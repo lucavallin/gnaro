@@ -19,16 +19,16 @@ typedef struct {
   void *pages[PAGER_MAX_PAGES];
 } Pager;
 
-// pager_open opens the database file and keeps track of its size
+// Open the database file and keeps track of its size
 Pager *pager_open(const char *filename);
 
-// pager_get_page returns a pointer to the page with the given page number
+// GET a pointer to the page with the given page number
 void *pager_get_page(Pager *pager, uint32_t page_num);
 
-// pager_flush writes the page with the given page number to disk
+// Write the page with the given page number to disk
 void pager_flush(Pager *pager, uint32_t page_num);
 
-// pager_get_unused_page_num returns the page number of the first unused page
+// Get the page number of the first unused page
 uint32_t pager_get_unused_page_num(Pager *pager);
 
 #endif

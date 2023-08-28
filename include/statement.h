@@ -37,22 +37,22 @@ typedef struct {
   Row row_to_insert;
 } Statement;
 
-// statement_prepare prepares a statement.
+// Prepare a statement
 StatementPrepareResult statement_prepare(char *query, Statement *statement);
 
-// statement_prepare_insert prepares an insert statement.
+// Prepare an insert statement
 StatementPrepareResult statement_prepare_insert(char *query,
                                                 Statement *statement);
 
-// statement_execute executes a statement.
+// Execute a statement
 StatementExecuteResult statement_execute(Statement *statement,
                                          Database *database);
 
-// statement_execute_insert executes an insert statement.
+// Execute an insert statement
 StatementExecuteResult statement_execute_insert(Statement *statement,
                                                 Database *database);
 
-// statement_execute_select executes a select statement.
+// Execute a select statement
 StatementExecuteResult statement_execute_select(Database *database);
 
 #endif

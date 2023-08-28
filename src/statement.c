@@ -2,7 +2,6 @@
 #include "btree.h"
 #include "cursor.h"
 #include "database.h"
-#include "input.h"
 #include "log.h"
 #include "pager.h"
 #include "row.h"
@@ -104,8 +103,8 @@ StatementExecuteResult statement_execute_insert(Statement *statement,
     }
   }
 
+  log_debug("inserting row...");
   btree_node_leaf_insert(cursor, row_to_insert->id, row_to_insert);
-
   cursor_close(cursor);
 
   log_debug("inserted row %d", row_to_insert->id);
