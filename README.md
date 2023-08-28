@@ -142,15 +142,14 @@ At the moment, the project does not contain any automated tests but `Cunit` is s
 It would be nice to at least support multiple tables, non-harcoded columns, "update" and "delete" statements.
 Improvements to code quality instead could be:
 
-- Call `exit()` only in the `main` function
-- Reduce dependencies between files.
-- Address linting issues.
-
 Unfortunately the goal of this project is only to learn more about databases and I am reasonably satisfied with the current state.
 
 ## Improvements
 
 - CMake and Conan are industry standards, so they should be used eventually instead of Make and the current build system. Unfortunately, CMake and Conan also add a lot of complexity which is not needed at this time.
+- Call `exit()` only in the `main` function
+- Reduce dependencies between files.
+- Address linting issues.
 
 ## Credits
 
