@@ -112,12 +112,12 @@ setup:
 	@sudo apt install -y libcunit1 libcunit1-doc libcunit1-dev
 
 	# Install third-party libraries and structure them
-	@mkdir -p $(LIB_DIR)/argtable $(LIB_DIR)/log
-	@echo "Installing argtable..."
-	@wget -qO- $(LIB_ARGTABLE_REPO) | bsdtar -xvf- --strip=1 -C $(LIB_DIR)/argtable *.c *.h 2> /dev/null
-	@find $(LIB_DIR)/argtable/* -d -type d -exec rm -rf '{}' \; 2> /dev/null
-	@echo "Installing log..."
-	@wget -qO- $(LIB_LOG_REPO) | bsdtar -xvf- --strip=2 -C $(LIB_DIR)/log *.c *.h 2> /dev/null
+	# @mkdir -p $(LIB_DIR)/argtable $(LIB_DIR)/log
+	# @echo "Installing argtable..."
+	# @wget -qO- $(LIB_ARGTABLE_REPO) | bsdtar -xvf- --strip=1 -C $(LIB_DIR)/argtable *.c *.h 2> /dev/null
+	# @find $(LIB_DIR)/argtable/* -d -type d -exec rm -rf '{}' \; 2> /dev/null
+	# @echo "Installing log..."
+	# @wget -qO- $(LIB_LOG_REPO) | bsdtar -xvf- --strip=2 -C $(LIB_DIR)/log *.c *.h 2> /dev/null
 
 	# Cleanup
 	@sudo apt autoremove -y
