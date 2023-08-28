@@ -44,7 +44,9 @@ DISASSEMBLER := llvm-objdump-18
 # 	-I$(INCLUDE_DIR): Include the include directory
 # 	-I$(LIB_ARGTABLE_DIR): Include the argtable library directory
 # 	-I$(LIB_LOG_DIR): Include the log library directory
+# 	-lm: Link to libm
 CFLAGS := -std=gnu17 -D _GNU_SOURCE -D __STDC_WANT_LIB_EXT1__ -Wall -Wextra -pedantic -I$(INCLUDE_DIR) -I$(LIB_ARGTABLE_DIR) -I$(LIB_LOG_DIR)
+LFLAGS := -lm
 
 ifeq ($(debug), 1)
 	CFLAGS := $(CFLAGS) -g -O0
