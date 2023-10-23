@@ -1,7 +1,7 @@
-#include "database.h"
-#include "btree.h"
-#include "log.h"
-#include "pager.h"
+#include "../include/database.h"
+#include "../include/btree.h"
+#include "../include/pager.h"
+#include "../lib/log/log.h"
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>

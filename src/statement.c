@@ -1,10 +1,10 @@
-#include "statement.h"
-#include "btree.h"
-#include "cursor.h"
-#include "database.h"
-#include "log.h"
-#include "pager.h"
-#include "row.h"
+#include "../include/statement.h"
+#include "../include/btree.h"
+#include "../include/cursor.h"
+#include "../include/database.h"
+#include "../include/pager.h"
+#include "../include/row.h"
+#include "../lib/log/log.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>

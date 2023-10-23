@@ -1,7 +1,7 @@
-#include "meta.h"
-#include "btree.h"
-#include "database.h"
-#include "log.h"
+#include "../include/meta.h"
+#include "../include/btree.h"
+#include "../include/database.h"
+#include "../lib/log/log.h"
 #include <string.h>
 
 // Execute a meta command (e.g. .exit)

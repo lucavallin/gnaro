@@ -1,38 +1,20 @@
 # Project Settings
 debug ?= 0
-SRC_DIR := ./src
-BUILD_DIR := ./build
-INCLUDE_DIR := ./include
-LIB_DIR := ./lib
-TESTS_DIR := ./tests
-BIN_DIR := ./bin
+NAME := gnaro
+SRC_DIR := src
+BUILD_DIR := build
+INCLUDE_DIR := include
+LIB_DIR := lib
+TESTS_DIR := tests
+BIN_DIR := bin
 
-# Executable settings
-GNARO := gnaro
-GNARO_ARGS_0 := --help
-GNARO_ARGS_1 := --version
-GNARO_ARGS_2 := -v
-
-# Libraries settings
-LIB_ARGTABLE_REPO := https://github.com/argtable/argtable3/releases/download/v3.2.2.f25c624/argtable-v3.2.2.f25c624-amalgamation.tar.gz
-LIB_ARGTABLE_NAME := argtable3
-LIB_ARGTABLE_DIR := $(LIB_DIR)/argtable
-LIB_ARGTABLE_SRC := $(LIB_ARGTABLE_DIR)/argtable3.c
-LIB_LOG_REPO := https://github.com/rxi/log.c/archive/refs/heads/master.zip
-LIB_LOG_NAME := log
-LIB_LOG_DIR := $(LIB_DIR)/log
-LIB_LOG_SRC := $(LIB_LOG_DIR)/log.c
-LIB_LOG_FLAGS := -DLOG_USE_COLOR
-
-# Gnaro object files
-OBJS := $(GNARO).o input.o meta.o statement.o row.o database.o pager.o cursor.o btree.o $(LIB_ARGTABLE_NAME).o $(LIB_LOG_NAME).o
+# Generate paths for all object files
+OBJS := $(patsubst %.c,%.o, $(wildcard $(SRC_DIR)/*.c) $(wildcard $(LIB_DIR)/**/*.c))
 
 # Compiler settings
 CC := clang-18
 LINTER := clang-tidy-18
 FORMATTER := clang-format-18
-DEBUGGER := lldb-18
-DISASSEMBLER := llvm-objdump-18
 
 # Compiler and Linker flags Settings:
 # 	-std=gnu17: Use the GNU17 standard
@@ -41,11 +23,8 @@ DISASSEMBLER := llvm-objdump-18
 # 	-Wall: Enable all warnings
 # 	-Wextra: Enable extra warnings
 # 	-pedantic: Enable pedantic warnings
-# 	-I$(INCLUDE_DIR): Include the include directory
-# 	-I$(LIB_ARGTABLE_DIR): Include the argtable library directory
-# 	-I$(LIB_LOG_DIR): Include the log library directory
 # 	-lm: Link to libm
-CFLAGS := -std=gnu17 -D _GNU_SOURCE -D __STDC_WANT_LIB_EXT1__ -Wall -Wextra -pedantic -I$(INCLUDE_DIR) -I$(LIB_ARGTABLE_DIR) -I$(LIB_LOG_DIR)
+CFLAGS := -std=gnu17 -D _GNU_SOURCE -D __STDC_WANT_LIB_EXT1__ -Wall -Wextra -pedantic
 LFLAGS := -lm
 
 ifeq ($(debug), 1)
@@ -56,23 +35,19 @@ endif
 
 # Targets
 
-# Build gnaro executable
-$(GNARO): format lint dir $(OBJS)
-	$(CC) $(CFLAGS) $(LFLAGS) -o $(BIN_DIR)/$(GNARO) $(foreach file,$(OBJS),$(BUILD_DIR)/$(file))
+# Build executable
+$(NAME): format lint dir $(OBJS)
+	$(CC) $(CFLAGS) $(LFLAGS) -o $(BIN_DIR)/$@ $(patsubst %, build/%, $(OBJS))
 
-# Build object files
-%.o: dir $(SRC_DIR)/%.c
-	@$(CC) $(CFLAGS) -o $(BUILD_DIR)/$*.o -c $(SRC_DIR)/$*.c
-# Build third-party libraries
-$(LIB_ARGTABLE_NAME).o: dir $(LIB_ARGTABLE_SRC)
-	@$(CC) $(CFLAGS) -o $(BUILD_DIR)/$(LIB_ARGTABLE_NAME).o -c $(LIB_ARGTABLE_SRC)
-$(LIB_LOG_NAME).o: dir $(LIB_ARGTABLE_SRC)
-	@$(CC) $(CFLAGS) -o $(BUILD_DIR)/$(LIB_LOG_NAME).o -c $(LIB_LOG_SRC) $(LIB_LOG_FLAGS)
+# Build object files and third-party libraries
+$(OBJS): dir
+	@mkdir -p $(BUILD_DIR)/$(@D)
+	@$(CC) $(CFLAGS) -o $(BUILD_DIR)/$@ -c $*.c
 
 # Run CUnit tests
 test: dir
-	@$(CC) $(CFLAGS) -lcunit -o $(BIN_DIR)/$(GNARO)_test $(TESTS_DIR)/$(GNARO)_test.c
-	@$(BIN_DIR)/$(GNARO)_test
+	@$(CC) $(CFLAGS) -lcunit -o $(BIN_DIR)/$(NAME)_test $(TESTS_DIR)/*.c
+	@$(BIN_DIR)/$(NAME)_test
 
 # Run linter on source directories
 lint:
@@ -83,10 +58,10 @@ format:
 	@$(FORMATTER) -style=file -i $(SRC_DIR)/* $(INCLUDE_DIR)/* $(TESTS_DIR)/*
 
 # Run valgrind memory checker on executable
-check: $(GNARO)
-	@sudo valgrind -s --leak-check=full --show-leak-kinds=all $(BIN_DIR)/$(GNARO) $(GNARO_ARGS_0)
-	@sudo valgrind -s --leak-check=full --show-leak-kinds=all $(BIN_DIR)/$(GNARO) $(GNARO_ARGS_1)
-	@sudo valgrind -s --leak-check=full --show-leak-kinds=all $(BIN_DIR)/$(GNARO) $(GNARO_ARGS_2)
+check: $(NAME)
+	@sudo valgrind -s --leak-check=full --show-leak-kinds=all $(BIN_DIR)/$< --help
+	@sudo valgrind -s --leak-check=full --show-leak-kinds=all $(BIN_DIR)/$< --version
+	@sudo valgrind -s --leak-check=full --show-leak-kinds=all $(BIN_DIR)/$< -v
 
 # Setup dependencies for build and development
 setup:
@@ -109,14 +84,6 @@ setup:
 	# Install CUnit testing framework
 	@sudo apt install -y libcunit1 libcunit1-doc libcunit1-dev
 
-	# Install third-party libraries and structure them
-	# @mkdir -p $(LIB_DIR)/argtable $(LIB_DIR)/log
-	# @echo "Installing argtable..."
-	# @wget -qO- $(LIB_ARGTABLE_REPO) | bsdtar -xvf- --strip=1 -C $(LIB_DIR)/argtable *.c *.h 2> /dev/null
-	# @find $(LIB_DIR)/argtable/* -d -type d -exec rm -rf '{}' \; 2> /dev/null
-	# @echo "Installing log..."
-	# @wget -qO- $(LIB_LOG_REPO) | bsdtar -xvf- --strip=2 -C $(LIB_DIR)/log *.c *.h 2> /dev/null
-
 	# Cleanup
 	@sudo apt autoremove -y
 
@@ -130,6 +97,6 @@ clean:
 
 # Run bear to generate compile_commands.json
 bear:
-	bear --exclude $(LIB_DIR) make $(GNARO)
+	bear --exclude $(LIB_DIR) make $(NAME)
 
 .PHONY: lint format check setup dir clean bear

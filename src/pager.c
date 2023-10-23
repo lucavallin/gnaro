@@ -1,5 +1,5 @@
-#include "pager.h"
-#include "log.h"
+#include "../include/pager.h"
+#include "../lib/log/log.h"
 #include <fcntl.h>
 #include <stddef.h>
 #include <stdint.h>

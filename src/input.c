@@ -1,5 +1,5 @@
-#include "input.h"
-#include "log.h"
+#include "../include/input.h"
+#include "../lib/log/log.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>

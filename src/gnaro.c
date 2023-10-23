@@ -1,9 +1,9 @@
-#include "argtable3.h"
-#include "database.h"
-#include "input.h"
-#include "log.h"
-#include "meta.h"
-#include "statement.h"
+#include "../include/database.h"
+#include "../include/input.h"
+#include "../include/meta.h"
+#include "../include/statement.h"
+#include "../lib/argtable/argtable3.h"
+#include "../lib/log/log.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>

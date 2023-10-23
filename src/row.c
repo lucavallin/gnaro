@@ -1,5 +1,5 @@
-#include "row.h"
-#include "log.h"
+#include "../include/row.h"
+#include "../lib/log/log.h"
 #include <stdio.h>
 #include <string.h>
 
