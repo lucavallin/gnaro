@@ -25,7 +25,7 @@ FORMATTER := clang-format-18
 # 	-pedantic: Enable pedantic warnings
 # 	-lm: Link to libm
 CFLAGS := -std=gnu17 -D _GNU_SOURCE -D __STDC_WANT_LIB_EXT1__ -Wall -Wextra -pedantic
-LFLAGS := -lm
+LDFLAGS := -lm
 
 ifeq ($(debug), 1)
 	CFLAGS := $(CFLAGS) -g -O0
@@ -37,7 +37,7 @@ endif
 
 # Build executable
 $(NAME): format lint dir $(OBJS)
-	$(CC) $(CFLAGS) $(LFLAGS) -o $(BIN_DIR)/$@ $(patsubst %, build/%, $(OBJS))
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/$@ $(patsubst %, build/%, $(OBJS))
 
 # Build object files and third-party libraries
 $(OBJS): dir
